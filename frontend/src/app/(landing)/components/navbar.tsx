@@ -2,7 +2,6 @@ import Link from "next/link";
 import AppLogo from "../../../components/widgets/logo";
 import { navLinks } from "@/config/links/nav-links";
 import { Button } from "../../../components/ui/button";
-import { Menu } from "lucide-react";
 import { CustomTrigger } from "./custom-trigger";
 
 
