@@ -76,7 +76,7 @@ export default function ApplicationSection() {
                 </FormItem>
               )}
             />
-            <Button type="submit" variant={"secondary"} className="w-full">
+            <Button type="submit" variant={"secondary"} className="w-full h-12">
               Apply here
             </Button>
           </form>
