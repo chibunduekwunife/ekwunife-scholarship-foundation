@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { info_cards } from "@/data/info-section-cards";
+import { info_cards } from "@/app/(landing)/data/info-section-cards";
 import Image from "next/image";
 
 export default function InfoSection() {

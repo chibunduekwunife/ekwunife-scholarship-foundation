@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import AppLogo from "../../../components/widgets/logo";
-import { navLinks } from "@/config/links/nav-links";
+import { navLinks } from "@/app/(landing)/components/landing-nav-links";
 import { Button } from "../../../components/ui/button";
 import { CustomTrigger } from "./custom-trigger";
 import {
@@ -11,7 +11,7 @@ import {
   DialogContent,
   DialogTrigger,
 } from "@/components/ui/dialog"
-import ScholarshipsPopover from "../(pages)/components/scholarships-popover";
+import ScholarshipsPopover from "./scholarships-popover";
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);

@@ -1,4 +1,4 @@
-import type { ScholarshipPageFormat } from "./page-format.types";
+import type { ScholarshipPageFormat } from "../../../types/page-format.types";
 
 type ScholarshipPageFormatProps = {
   data: ScholarshipPageFormat;

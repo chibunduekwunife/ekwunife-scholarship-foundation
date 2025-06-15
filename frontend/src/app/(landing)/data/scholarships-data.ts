@@ -1,4 +1,4 @@
-import type { ScholarshipPageFormat } from "./page-format.types";
+import type { ScholarshipPageFormat } from "../types/page-format.types";
 
 export const SSCE_data: ScholarshipPageFormat = {
   scholarshipDescription: {

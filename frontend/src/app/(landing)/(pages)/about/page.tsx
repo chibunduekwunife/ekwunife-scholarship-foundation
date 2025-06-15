@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { aboutPageParagraphs, missionVision } from "@/data/about-page";
+import { aboutPageParagraphs, missionVision } from "@/app/(landing)/data/about-page";
 
 export default function AboutPage() {
   return (

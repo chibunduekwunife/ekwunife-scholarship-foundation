@@ -1,6 +1,6 @@
 "use client";
 
-import { states } from "@/data/nigerian-states";
+import { states } from "@/app/(landing)/data/nigerian-states";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";

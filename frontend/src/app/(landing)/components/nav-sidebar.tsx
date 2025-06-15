@@ -11,7 +11,7 @@ import {
   SidebarMenuSub,
   SidebarMenuSubItem,
 } from "@/components/ui/sidebar";
-import { navLinks } from "@/config/links/nav-links";
+import { navLinks } from "@/app/(landing)/components/landing-nav-links";
 import Link from "next/link";
 import {
   Collapsible,

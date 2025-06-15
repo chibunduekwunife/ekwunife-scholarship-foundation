@@ -1,4 +1,4 @@
-import { BGUS_data } from "../components/data";
+import { BGUS_data } from "../../../data/scholarships-data";
 import PageFormat from "../components/page-format";
 import { TitleStyledComponent } from "../components/styled-components";
 
