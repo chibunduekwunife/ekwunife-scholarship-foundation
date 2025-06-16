@@ -1,6 +1,7 @@
 "use client"
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import AppLogo from "../../../components/widgets/logo";
 import { navLinks } from "@/app/(landing)/components/landing-nav-links";
@@ -15,6 +16,7 @@ import ScholarshipsPopover from "./scholarships-popover";
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
+  const router = useRouter();
 
   const handleClick = () => {
     setOpen(false)
@@ -57,7 +59,7 @@ export default function Navbar() {
           })}
         </div>
         <div className="flex items-center gap-2">
-          <Button variant={"secondary"}>Login</Button>
+          <Button variant={"secondary"} onClick={() => router.push("/auth")}>Login</Button>
           <CustomTrigger />
         </div>
       </div>
