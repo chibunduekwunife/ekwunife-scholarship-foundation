@@ -51,8 +51,8 @@ export default function MultiStepForm() {
     tab_buttons.find((tab) => tab.value === currentTab)?.content || null;
 
   return (
-    <div className="grid grid-cols-4 gap-10 my-15">
-      <div className="">
+    <div className="grid grid-cols-1 md:grid-cols-4 gap-10 my-15">
+      <div className="flex md:flex-col">
         {tab_buttons.map((tab) => (
           <Button
             key={tab.id}
@@ -60,7 +60,7 @@ export default function MultiStepForm() {
             variant={"ghost"}
             onClick={() => setCurrentTab(tab.value)}
             className={clsx(
-              "w-full text-left justify-start",
+              "md:w-full text-left justify-start",
               currentTab === tab.value && "bg-gray-200"
             )}
           >
@@ -68,7 +68,7 @@ export default function MultiStepForm() {
           </Button>
         ))}
       </div>
-      <div className="col-span-2">
+      <div className="col-span-3">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
             {TabContent && <TabContent />}
