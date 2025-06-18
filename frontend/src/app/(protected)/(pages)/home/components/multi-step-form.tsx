@@ -28,7 +28,7 @@ export default function MultiStepForm() {
     defaultValues: {
       fullname: "",
       age: 15,
-      gender: [],
+      gender: "",
       village: "",
       phone: "",
       address: "",

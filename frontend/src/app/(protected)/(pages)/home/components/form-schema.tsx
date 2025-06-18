@@ -11,7 +11,7 @@ export const formSchema = z.object({
   //       message: "This application only accepts applicants over the age of 15",
   //     })
   //   ),
-  gender: z.array(z.string()).optional(),
+  gender: z.string().optional(),
   village: z.string().optional(),
   phone: z
     .string()
