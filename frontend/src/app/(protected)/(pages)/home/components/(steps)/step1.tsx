@@ -20,7 +20,7 @@ import { Button } from "@/components/ui/button";
 export default function Step1() {
   const { control } = useFormContext();
   return (
-    <div className="flex flex-col gap-7 max-w-lg">
+    <div className="flex flex-col gap-7 max-w-lg my-4">
       <FormField
         control={control}
         name="fullname"

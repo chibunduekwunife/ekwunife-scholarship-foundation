@@ -32,7 +32,7 @@ export default function MultiStepForm() {
       village: "",
       phone: "",
       address: "",
-      category: [],
+      category: "",
       secondary_school: "",
       year_of_ssce: [],
       grades: [],

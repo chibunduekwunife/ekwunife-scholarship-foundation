@@ -22,7 +22,7 @@ export const formSchema = z.object({
     }),
   address: z.string().min(1, { message: "Address is required." }),
   category: z
-    .array(z.string())
+    .string()
     .min(1, { message: "Select at least one category" }),
   secondary_school: z
     .string()
