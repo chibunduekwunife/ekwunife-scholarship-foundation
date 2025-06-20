@@ -11,7 +11,7 @@ export default function LandingLayout({
   return (
     <SidebarProvider defaultOpen={false}>
       <NavSidebar />
-      <main className="flex flex-col min-h-screen w-full">
+      <main className="min-h-screen w-full">
         <Navbar isAuthenticated={false} />
         <div className="flex-1 max-w-screen-xl mx-auto px-[3%]">{children}</div>
         <Footer />
