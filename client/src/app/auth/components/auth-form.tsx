@@ -37,6 +37,11 @@ export default function AuthForm({
           required_error: "Please provide a valid email address",
         })
         .email(),
+      username: z
+        .string({
+          required_error: "Please provide a username",
+        })
+        .min(2, "Username must be at least 2 characters long"),
       password: z
         .string({
           required_error: "Please provide a password",
@@ -55,6 +60,7 @@ export default function AuthForm({
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      username: "",
       email: "",
       password: "",
       confirmPassword: "",
@@ -77,8 +83,8 @@ export default function AuthForm({
           <CardDescription>
             <div className="flex justify-center">
               {isExistingUser
-              ? "Enter your login credentials to start session"
-              : "Create new account to start application"}
+                ? "Enter your login credentials to start session"
+                : "Create new account to start application"}
             </div>
           </CardDescription>
         </CardHeader>
@@ -86,6 +92,20 @@ export default function AuthForm({
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
               <FormField
+                control={form.control}
+                name="username"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Username</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Username" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              {!isExistingUser && (
+                <FormField
                 control={form.control}
                 name="email"
                 render={({ field }) => (
@@ -98,6 +118,7 @@ export default function AuthForm({
                   </FormItem>
                 )}
               />
+              )}
               <FormField
                 control={form.control}
                 name="password"
