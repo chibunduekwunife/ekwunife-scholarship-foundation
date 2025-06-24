@@ -22,14 +22,14 @@ export default function AuthPage() {
           <div className="flex flex-col items-center justify-center gap-2 w-full px-4">
             <Button
               className="w-full"
-              onClick={() => router.push("/auth/login")}
+              onClick={() => router.push("/auth/signup")}
             >
               New Applicant
             </Button>
             <Button
               variant={"outline"}
               className="w-full"
-              onClick={() => router.push("/auth/signup")}
+              onClick={() => router.push("/auth/login")}
             >
               Existing Application
             </Button>

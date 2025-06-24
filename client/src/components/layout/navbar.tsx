@@ -9,6 +9,7 @@ import { Button } from "../ui/button";
 import { CustomTrigger } from "../../app/(landing)/components/custom-trigger";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import ScholarshipsPopover from "../../app/(landing)/components/scholarships-popover";
+import { logout } from "@/lib/auth";
 
 export default function Navbar({
   isAuthenticated,
@@ -25,7 +26,12 @@ export default function Navbar({
   return (
     <div className="w-full border-b-2 shadow-md">
       <div className="flex max-w-screen-xl mx-auto justify-between items-center py-6 px-[3%]">
-        <AppLogo width={150} height={150} />
+        {!isAuthenticated ? (
+          <AppLogo href={"/"} width={150} height={150} />
+        ) : (
+          <AppLogo href={"/home"} width={150} height={150} />
+        )}
+
         {!isAuthenticated && (
           <div className="hidden md:flex lg:gap-6">
             {navLinks.map((link) => {
@@ -66,7 +72,13 @@ export default function Navbar({
               <CustomTrigger />
             </div>
           ) : (
-            <Button variant={"secondary"} onClick={() => router.push("/auth")}>
+            <Button
+              variant={"secondary"}
+              onClick={() => {
+                logout();
+                router.replace("/auth/login");
+              }}
+            >
               Logout
             </Button>
           )}

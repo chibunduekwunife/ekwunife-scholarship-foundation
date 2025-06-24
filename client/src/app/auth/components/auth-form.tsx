@@ -22,53 +22,108 @@ import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
+import { useState, useMemo } from "react";
+import { toast } from "sonner";
+import api from "@/lib/api";
+import { ACCESS_TOKEN, REFRESH_TOKEN } from "@/lib/constants";
 
 export default function AuthForm({
   isExistingUser,
+  route,
 }: {
   isExistingUser: boolean;
+  route?: string;
 }) {
   const router = useRouter();
 
-  const formSchema = z
+  const [loading, setLoading] = useState(false);
+
+  // Define separate schemas for login and signup
+  const loginSchema = z.object({
+    username: z
+      .string({ required_error: "Please provide a username" })
+      .min(2, "Username must be at least 2 characters long"),
+    password: z
+      .string({ required_error: "Please provide a password" })
+      .min(5, "Password must be at least 5 characters long"),
+  });
+
+  const signupSchema = z
     .object({
       email: z
-        .string({
-          required_error: "Please provide a valid email address",
-        })
+        .string({ required_error: "Please provide a valid email address" })
         .email(),
       username: z
-        .string({
-          required_error: "Please provide a username",
-        })
+        .string({ required_error: "Please provide a username" })
         .min(2, "Username must be at least 2 characters long"),
       password: z
-        .string({
-          required_error: "Please provide a password",
-        })
-        .min(8, "Password must be at least 8 characters long"),
-      confirmPassword: z.string().optional(),
+        .string({ required_error: "Please provide a password" })
+        .min(5, "Password must be at least 5 characters long"),
+      confirmPassword: z.string(),
     })
-    .refine(
-      (data) => !isExistingUser || data.password === data.confirmPassword,
-      {
-        message: "Passwords do not match",
-        path: ["confirmPassword"],
-      }
-    );
+    .refine((data) => data.password === data.confirmPassword, {
+      message: "Passwords do not match",
+      path: ["confirmPassword"],
+    });
+
+  // Pick the correct schema
+  const formSchema = useMemo(
+    () => (isExistingUser ? loginSchema : signupSchema),
+    [isExistingUser]
+  );
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      username: "",
-      email: "",
-      password: "",
-      confirmPassword: "",
-    },
+    defaultValues: isExistingUser
+      ? { username: "", password: "" }
+      : { username: "", email: "", password: "", confirmPassword: "" },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
+  async function onSubmit(values: any) {
+    console.log("onSubmit called");
+    setLoading(true);
+
+    if (!route) {
+      toast("Route is not defined.");
+      setLoading(false);
+      return;
+    }
+
+    try {
+      let res;
+      if (isExistingUser) {
+        const { username, password } = values;
+        res = await api.post(route, { username, password });
+        localStorage.setItem(ACCESS_TOKEN, res.data.access);
+        localStorage.setItem(REFRESH_TOKEN, res.data.refresh);
+        router.push("/home");
+      } else {
+        const { username, email, password } = values;
+        res = await api.post(route, { username, email, password });
+        router.push("/auth/login");
+      }
+    } catch (error: any) {
+      // Improved error handling for Axios errors
+      if (error.response && error.response.data) {
+        // Backend returned an error response
+        const data = error.response.data;
+        if (typeof data === "string") {
+          toast(data);
+        } else if (typeof data === "object") {
+          // Show all error messages from backend
+          const messages = Object.values(data).flat().join(" ");
+          toast(messages);
+        } else {
+          toast("An unknown error occurred.");
+        }
+      } else if (error.message) {
+        toast(error.message);
+      } else {
+        toast(String(error));
+      }
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -77,7 +132,7 @@ export default function AuthForm({
         <CardHeader>
           <CardTitle>
             <div className="flex justify-center">
-              <AppLogo width={150} height={150} />
+              <AppLogo href={"/"} width={150} height={150} />
             </div>
           </CardTitle>
           <CardDescription>
@@ -106,18 +161,18 @@ export default function AuthForm({
               />
               {!isExistingUser && (
                 <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Email</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Email" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                  control={form.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Email</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Email" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
               )}
               <FormField
                 control={form.control}
