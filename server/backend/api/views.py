@@ -4,6 +4,9 @@ from rest_framework import generics
 from .serializers import UserSerializer, ApplicationSerializer
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from .models import Application
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
 
 # Create New Application
 class ApplicationListCreate(generics.ListCreateAPIView):
@@ -34,3 +37,10 @@ class CreateUserView(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = [AllowAny]
+
+# Get User View
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def GetUserView(request):
+    user = request.user
+    return Response({'username': user.username, 'email': user.email})
