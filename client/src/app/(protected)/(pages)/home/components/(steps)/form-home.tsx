@@ -1,3 +1,5 @@
+import PageFormat from "@/app/(landing)/(pages)/scholarships/components/page-format";
+import { SSCE_data } from "@/app/(landing)/data/scholarships-data";
 import { Button } from "@/components/ui/button";
 
 export default function FormHome() {

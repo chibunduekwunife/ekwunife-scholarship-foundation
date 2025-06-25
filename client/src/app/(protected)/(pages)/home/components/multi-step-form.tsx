@@ -34,8 +34,8 @@ export default function MultiStepForm() {
       address: "",
       category: "",
       secondary_school: "",
-      year_of_ssce: [],
-      grades: [],
+      graduating_year: [],
+      // grades: [],
       result_documents: undefined,
       passport_photo: undefined,
       essay: "",
@@ -75,6 +75,7 @@ export default function MultiStepForm() {
           </form>
         </Form>
       </div>
+      
     </div>
   );
 }

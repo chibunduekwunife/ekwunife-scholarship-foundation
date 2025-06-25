@@ -5,12 +5,6 @@ export const formSchema = z.object({
     message: "Fullname must be at least 2 characters.",
   }),
   age: z.number().min(1, { message: "Age is required" }),
-  //   age: z.preprocess(
-  //     (val) => Number(val),
-  //     z.number().min(15, {
-  //       message: "This application only accepts applicants over the age of 15",
-  //     })
-  //   ),
   gender: z.string().optional(),
   village: z.string().optional(),
   phone: z
@@ -27,10 +21,10 @@ export const formSchema = z.object({
   secondary_school: z
     .string()
     .min(1, { message: "Secondary school attended is required" }),
-  year_of_ssce: z
+  graduating_year: z
     .array(z.string())
     .min(1, { message: "Select the year of SSCE/JAMB" }),
-  grades: z.array(z.string()).min(1, { message: "Select a subject" }),
+  // grades: z.array(z.string()).min(1, { message: "Select a subject" }),
   result_documents: z.instanceof(File, {
     message: "Result document required ",
   }),

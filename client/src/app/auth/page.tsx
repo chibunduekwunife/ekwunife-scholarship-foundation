@@ -16,7 +16,7 @@ export default function AuthPage() {
   const router = useRouter();
   return (
     <div className="flex flex-col h-screen items-center justify-center gap-5">
-      <AppLogo width={150} height={150} />
+      <AppLogo href={"/"} width={150} height={150} />
       <Card className="w-[80%] md:w-[30%] h-[40%]">
         <CardContent className="h-full flex flex-col items-center justify-center">
           <div className="flex flex-col items-center justify-center gap-2 w-full px-4">
@@ -31,7 +31,7 @@ export default function AuthPage() {
               className="w-full"
               onClick={() => router.push("/auth/login")}
             >
-              Existing Application
+              Existing Applicant
             </Button>
           </div>
         </CardContent>

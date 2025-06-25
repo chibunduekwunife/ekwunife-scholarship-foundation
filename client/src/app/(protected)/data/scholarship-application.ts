@@ -19,6 +19,6 @@ export const tab_buttons = [
         id: 4, value: "essay", title: "Essay", content: Step3,
     },
     {
-        id: 5, value: "additional information", title: "Additional Information", content: Step4,
+        id: 5, value: "program checklist", title: "Program Checklist", content: Step4,
     }
   ]
