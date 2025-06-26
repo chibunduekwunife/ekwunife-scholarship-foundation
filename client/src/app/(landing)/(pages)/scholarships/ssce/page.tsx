@@ -1,4 +1,3 @@
-import { Button } from "@/components/ui/button";
 import { SSCE_data } from "../../../data/scholarships-data";
 import PageFormat from "../components/page-format";
 import { TitleStyledComponent } from "../components/styled-components";

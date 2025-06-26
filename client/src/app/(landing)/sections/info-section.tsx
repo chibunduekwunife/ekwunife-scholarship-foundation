@@ -1,4 +1,3 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { info_cards } from "@/app/(landing)/data/info-section-cards";
 import Image from "next/image";
 
@@ -11,8 +10,8 @@ export default function InfoSection() {
         </h1>
         <p className="max-w-[80%] md:max-w-[50%] mx-auto">
           Applying for the Ekwunife scholarship foundation is both competitive
-          and demanding. To maximize your chances of success, it's important to
-          conduct thorough research. We've gathered the key information you need
+          and demanding. To maximize your chances of success, it&apos;s important to
+          conduct thorough research. We&apos;ve gathered the key information you need
           right here.
         </p>
       </div>

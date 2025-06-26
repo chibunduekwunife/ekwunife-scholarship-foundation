@@ -1,5 +1,5 @@
 import Navbar from "@/components/layout/navbar";
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { SidebarProvider } from "@/components/ui/sidebar";
 import NavSidebar from "@/app/(landing)/components/nav-sidebar";
 import Footer from "../../components/layout/footer";
 

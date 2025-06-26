@@ -3,14 +3,7 @@
 import { Button } from "@/components/ui/button";
 import {
   Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useState } from "react";
@@ -18,7 +11,6 @@ import { z } from "zod";
 import { formSchema } from "./form-schema";
 import { tab_buttons } from "@/app/(protected)/data/scholarship-application";
 import clsx from "clsx";
-import FormHome from "./(steps)/form-home";
 
 export default function MultiStepForm() {
   const [currentTab, setCurrentTab] = useState<string>("home");

@@ -34,6 +34,7 @@ export default function ApplicationSection() {
   });
 
   function onSubmit(data: z.infer<typeof formSchema>) {
+    console.log("Form data submitted:", data);
     toast("form submitted!");
   }
 

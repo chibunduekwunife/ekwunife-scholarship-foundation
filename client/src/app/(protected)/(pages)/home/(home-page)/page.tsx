@@ -10,8 +10,11 @@ export default function HomePage() {
 
   useEffect(() => {
     fetchUserInfo().then(setUser);
-    console.log(user)
   }, []);
+
+  useEffect(() => {
+    console.log(user);
+  }, [user]);
 
   return (
     <div className="flex flex-col my-10">

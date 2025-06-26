@@ -12,7 +12,6 @@ import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -22,7 +21,7 @@ import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import { toast } from "sonner";
 import api from "@/lib/api";
 import { ACCESS_TOKEN, REFRESH_TOKEN } from "@/lib/constants";
@@ -67,10 +66,7 @@ export default function AuthForm({
     });
 
   // Pick the correct schema
-  const formSchema = useMemo(
-    () => (isExistingUser ? loginSchema : signupSchema),
-    [isExistingUser]
-  );
+  const formSchema = isExistingUser ? loginSchema : signupSchema;
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -79,7 +75,7 @@ export default function AuthForm({
       : { username: "", email: "", password: "", confirmPassword: "" },
   });
 
-  async function onSubmit(values: any) {
+  async function onSubmit(values: z.infer<typeof formSchema>) {
     console.log("onSubmit called");
     setLoading(true);
 
@@ -97,27 +93,36 @@ export default function AuthForm({
         localStorage.setItem(ACCESS_TOKEN, res.data.access);
         localStorage.setItem(REFRESH_TOKEN, res.data.refresh);
         router.push("/home");
-      } else {
+      } else if ("email" in values) {
         const { username, email, password } = values;
         res = await api.post(route, { username, email, password });
         router.push("/auth/login");
       }
-    } catch (error: any) {
-      // Improved error handling for Axios errors
-      if (error.response && error.response.data) {
-        // Backend returned an error response
-        const data = error.response.data;
+    } catch (error: unknown) {
+      if (
+        error &&
+        typeof error === "object" &&
+        "response" in error &&
+        error.response &&
+        typeof error.response === "object" &&
+        "data" in error.response
+      ) {
+        const data = (error.response as { data?: Record<string, string | string[]> }).data;
         if (typeof data === "string") {
           toast(data);
-        } else if (typeof data === "object") {
-          // Show all error messages from backend
-          const messages = Object.values(data).flat().join(" ");
+        } else if (typeof data === "object" && data !== null) {
+          const messages = Object.values(data as Record<string, string | string[]>).flat().join(" ");
           toast(messages);
         } else {
           toast("An unknown error occurred.");
         }
-      } else if (error.message) {
-        toast(error.message);
+      } else if (
+        typeof error === "object" &&
+        error &&
+        "message" in error &&
+        typeof (error as { message: unknown }).message === "string"
+      ) {
+        toast((error as { message: string }).message);
       } else {
         toast(String(error));
       }
@@ -206,13 +211,13 @@ export default function AuthForm({
                   )}
                 />
               )}
-              <Button type="submit" className="w-full">
-                {isExistingUser ? "Login" : "Sign up"}
+              <Button type="submit" className="w-full" disabled={loading}>
+                {loading ? (isExistingUser ? "Logging in..." : "Signing up...") : isExistingUser ? "Login" : "Sign up"}
               </Button>
               {isExistingUser ? (
                 <div className="flex flex-col w-full items-center text-center">
                   <p>
-                    Don't have a DAAD-ID yet?
+                    Don&apos;t have a DAAD-ID yet?
                     <Button
                       variant={"link"}
                       className="text-primary p-2"

@@ -1,5 +1,4 @@
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
 
 export default function ApplyButton() {
   //use router to push to specific protected route or go to log in page if not authenticated

@@ -4,22 +4,12 @@ import { useRouter } from "next/navigation";
 import { jwtDecode } from "jwt-decode";
 import api from "@/lib/api";
 import { REFRESH_TOKEN, ACCESS_TOKEN } from "@/lib/constants";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { toast } from "sonner";
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const [isAuthorized, setIsAuthorized] = useState<boolean | null>(null);
-
-  useEffect(() => {
-    auth().catch(() => setIsAuthorized(false));
-  }, []);
-
-  useEffect(() => {
-    if (isAuthorized === false) {
-      router.push("/auth/login");
-    }
-  }, [isAuthorized, router]);
 
   const refreshToken = async () => {
     const refreshToken = localStorage.getItem(REFRESH_TOKEN);
@@ -41,7 +31,7 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const auth = async () => {
+  const auth = useCallback(async () => {
     const token = localStorage.getItem(ACCESS_TOKEN);
 
     if (!token) {
@@ -58,7 +48,17 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
     } else {
       setIsAuthorized(true);
     }
-  };
+  }, [setIsAuthorized]);
+
+  useEffect(() => {
+    auth().catch(() => setIsAuthorized(false));
+  }, [auth]);
+
+  useEffect(() => {
+    if (isAuthorized === false) {
+      router.push("/auth/login");
+    }
+  }, [isAuthorized, router]);
 
   if (isAuthorized === null) {
     return <div>Loading...</div>;

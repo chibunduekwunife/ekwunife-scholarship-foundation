@@ -4,9 +4,7 @@ import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardFooter,
-  CardHeader,
 } from "@/components/ui/card";
 import AppLogo from "@/components/widgets/logo";
 import { ArrowLeftSquare } from "lucide-react";

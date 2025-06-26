@@ -22,7 +22,7 @@ export default function Step3() {
         render={({ field }) => (
           <FormItem>
             <FormLabel>
-              "Why I deserve This Scholarship" or "My Academic Journey"
+              &quot;Why I deserve This Scholarship&quot; or &quot;My Academic Journey&quot;
             </FormLabel>
             <FormControl>
               <Textarea

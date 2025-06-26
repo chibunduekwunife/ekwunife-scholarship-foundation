@@ -18,7 +18,6 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
-import { GraduationCap, Scroll } from "lucide-react";
 import AppLogo from "@/components/widgets/logo";
 
 export default function NavSidebar() {
@@ -26,7 +25,7 @@ export default function NavSidebar() {
     <Sidebar>
       <SidebarHeader>
         <div className="flex items-end justify-start border-b-2 h-23 pb-2">
-          <AppLogo width={200} height={200}/>
+          <AppLogo href={"/"} width={200} height={200}/>
         </div>
       </SidebarHeader>
       <SidebarContent>
