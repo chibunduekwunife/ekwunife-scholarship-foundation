@@ -1,3 +1,5 @@
+"use client"
+
 import {
   Sidebar,
   SidebarContent,
@@ -10,6 +12,7 @@ import {
   SidebarMenuItem,
   SidebarMenuSub,
   SidebarMenuSubItem,
+  useSidebar,
 } from "@/components/ui/sidebar";
 import { navLinks } from "@/app/(landing)/components/landing-nav-links";
 import Link from "next/link";
@@ -21,6 +24,7 @@ import {
 import AppLogo from "@/components/widgets/logo";
 
 export default function NavSidebar() {
+  const { toggleSidebar } = useSidebar();
   return (
     <Sidebar>
       <SidebarHeader>
@@ -48,13 +52,13 @@ export default function NavSidebar() {
                         </CollapsibleTrigger>
                         <CollapsibleContent>
                           <SidebarMenuSub>
-                            <SidebarMenuSubItem>
+                            <SidebarMenuSubItem onClick={toggleSidebar}>
                               <Link href="/scholarships/ssce" className="flex items-center gap-1.5">
                                 {/* <Scroll size={15} /> */}
                                 <span className="text-gray-500 text-xs">Secondary School Scholars (SSCE)</span>
                               </Link>
                             </SidebarMenuSubItem>
-                            <SidebarMenuSubItem>
+                            <SidebarMenuSubItem onClick={toggleSidebar}>
                               <Link href="/scholarships/bgus" className="flex items-center gap-1.5">
                                 {/* <Scroll size={15} /> */}
                                 <span className="text-gray-500 text-xs">Best Graduating University Students</span>
@@ -68,7 +72,7 @@ export default function NavSidebar() {
                 } else {
                   return (
                     <SidebarMenuItem key={link.id}>
-                      <SidebarMenuButton asChild>
+                      <SidebarMenuButton onClick={toggleSidebar} asChild>
                         <Link href={link.href}>
                           <link.icon />
                           <span>{link.name}</span>
