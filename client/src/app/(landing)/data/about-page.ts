@@ -1,7 +1,7 @@
 export const aboutPageParagraphs = [
   {
     id: 1,
-    text: "The Ekwunife Scholarship Foundation was established in honor of our beloved father, Chief Christopher Ekwunife, whose vision, sacrifice, and unwavering belief in education transformed the destiny of our family and community. In a time of extreme difficulty following the Nigerian Civil War (1967–1970), when many in Igboland turned to trade apprenticeships as a means of survival, our father chose a bold, alternative path — he championed education.",
+    text: "The Ekwunife Scholarship Foundation was established in honor of our beloved father, Christopher Ekwunife, whose vision, sacrifice, and unwavering belief in education transformed the destiny of our family and community. In a time of extreme difficulty following the Nigerian Civil War (1967–1970), when many in Igboland turned to trade apprenticeships as a means of survival, our father chose a bold, alternative path — he championed education.",
   },
   {
     id: 2,
