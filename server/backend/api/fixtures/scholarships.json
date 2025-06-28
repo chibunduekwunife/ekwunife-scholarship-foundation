@@ -1,0 +1,44 @@
+[
+  {
+    "model": "api.scholarship",
+    "pk": 1,
+    "fields": {
+      "name": "Secondary School Scholars SSCE",
+      "description": "A total of ₦1,000,000 will be awarded to the best-performing students from Ekwulobia",
+      "eligibility_criteria": [
+        "Must be from Ekwulobia (Anambra State)",
+        "Completed WAEC/NECO in 2025 with at least 5 distinctions (A1–B3)",
+        "Scored 280 or above in the 2025 JAMB examination"
+      ],
+      "required_documents": [
+        "Scanned copy of 2025 WAEC/NECO result",
+        "Scanned copy of 2025 JAMB result",
+        "Passport photograph",
+        "Short essay (100–150 words): Why I Deserve This Scholarship",
+        "Contact info: email & phone number"
+      ],
+      "deadline": "2025-07-30"
+    }
+  },
+  {
+    "model": "api.scholarship",
+    "pk": 2,
+    "fields": {
+      "name": "Best Graduating University Students",
+      "description": "In recognition of academic consistency, two prizes will be awarded to graduates from Ekwulobia",
+      "eligibility_criteria": [
+        "Must be from Ekwulobia",
+        "Graduated from a Nigerian university in the 2024/2025 academic year",
+        "Must submit official certificate and transcript showing a minimum of Second Class Upper (2:1)"
+      ],
+      "required_documents": [
+        "Passport photograph",
+        "Official certificate of graduation",
+        "Official university transcript",
+        "Contact info: email & phone number",
+        "Optional statement: My Academic Journey (100–200 words)"
+      ],
+      "deadline": "2025-07-30"
+    }
+  }
+]
