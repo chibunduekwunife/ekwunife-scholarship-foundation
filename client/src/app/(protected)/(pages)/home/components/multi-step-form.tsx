@@ -18,6 +18,13 @@ import {
 } from "../services/application-service";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import api from "@/lib/api";
+
+interface Scholarship {
+  id: number;
+  name: string;
+  description: string;
+}
 
 interface MultiStepFormProps {
   scholarshipId?: number;
@@ -28,6 +35,7 @@ export default function MultiStepForm({ scholarshipId = 1, existingApplication }
   const [currentTab, setCurrentTab] = useState<string>("home");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [scholarships, setScholarships] = useState<Scholarship[]>([]);
   const router = useRouter();
 
   const form = useForm({
@@ -52,6 +60,20 @@ export default function MultiStepForm({ scholarshipId = 1, existingApplication }
       status: "draft",
     },
   });
+
+  // Fetch scholarships on mount
+  useEffect(() => {
+    const fetchScholarships = async () => {
+      try {
+        const response = await api.get("/api/scholarships/");
+        setScholarships(response.data);
+      } catch (error) {
+        console.error("Failed to fetch scholarships:", error);
+      }
+    };
+
+    fetchScholarships();
+  }, []);
 
   // Load draft or existing application on mount
   useEffect(() => {
@@ -104,13 +126,24 @@ export default function MultiStepForm({ scholarshipId = 1, existingApplication }
     try {
       values.status = "pending"; // Change status to pending on submit
       
-      // Set scholarship ID based on scholarship_type
-      if (values.scholarship_type?.includes("SSCE")) {
-        values.scholarship = 4; // SSCE scholarship ID
-      } else if (values.scholarship_type?.includes("University")) {
-        values.scholarship = 5; // BGUS scholarship ID
+      // Set scholarship ID based on scholarship_type dynamically
+      const selectedScholarship = scholarships.find(scholarship => 
+        scholarship.name === values.scholarship_type
+      );
+      
+      if (selectedScholarship) {
+        values.scholarship = selectedScholarship.id;
       } else {
-        values.scholarship = 4; // Default to SSCE
+        // Fallback: try to match by name pattern
+        if (values.scholarship_type?.includes("SSCE")) {
+          const ssceScholarship = scholarships.find(s => s.name.includes("SSCE"));
+          values.scholarship = ssceScholarship?.id || scholarshipId;
+        } else if (values.scholarship_type?.includes("University")) {
+          const universityScholarship = scholarships.find(s => s.name.includes("University"));
+          values.scholarship = universityScholarship?.id || scholarshipId;
+        } else {
+          values.scholarship = scholarshipId; // Use provided scholarshipId as fallback
+        }
       }
       
       if (existingApplication) {
