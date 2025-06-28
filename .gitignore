@@ -3,6 +3,8 @@ db.sqlite3
 .venv/
 .env*
 __pycache__/
+staticfiles/
+media/
 
 # === Frontend (Node/Next.js) ===
 node_modules/
