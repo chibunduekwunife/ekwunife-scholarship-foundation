@@ -6,7 +6,6 @@ import {
   FormControl,
   FormMessage,
 } from "@/components/ui/form";
-import { format } from "date-fns";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -15,34 +14,55 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
-import { CalendarIcon } from "lucide-react";
-import { Calendar } from "@/components/ui/calendar";
+import { useState, useEffect } from "react";
+import api from "@/lib/api";
+
+interface Scholarship {
+  id: number;
+  name: string;
+  description: string;
+}
 
 export default function Step2() {
   const { control } = useFormContext();
+  const [scholarships, setScholarships] = useState<Scholarship[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchScholarships = async () => {
+      try {
+        const response = await api.get("/api/scholarships/");
+        setScholarships(response.data);
+      } catch (error) {
+        console.error("Failed to fetch scholarships:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchScholarships();
+  }, []);
+
   return (
     <div className="flex flex-col gap-7 max-w-lg my-4">
       <FormField
         control={control}
-        name="category"
+        name="scholarship_type"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Category</FormLabel>
+            <FormLabel>Scholarship</FormLabel>
             <Select onValueChange={field.onChange} defaultValue={field.value}>
               <FormControl>
                 <SelectTrigger>
-                  <SelectValue placeholder="Select category" />
+                  <SelectValue placeholder={loading ? "Loading scholarships..." : "Select scholarship"} />
                 </SelectTrigger>
               </FormControl>
               <SelectContent>
-                <SelectItem value="n/a">N/A</SelectItem>
+                {scholarships.map((scholarship) => (
+                  <SelectItem key={scholarship.id} value={scholarship.name}>
+                    {scholarship.name}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
             <FormMessage />
@@ -51,12 +71,12 @@ export default function Step2() {
       />
       <FormField
         control={control}
-        name="secondary_school"
+        name="school"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Secondary school attended</FormLabel>
+            <FormLabel>School attended</FormLabel>
             <FormControl>
-              <Input {...field} />
+              <Input placeholder="Enter your school name" {...field} />
             </FormControl>
             <FormMessage />
           </FormItem>
@@ -64,56 +84,37 @@ export default function Step2() {
       />
       <FormField
         control={control}
-        name="graduating_year"
+        name="graduation_year"
         render={({ field }) => (
-          <FormItem className="flex flex-col">
-            <FormLabel>Year of SSCE/JAMB</FormLabel>
-            <Popover>
-              <PopoverTrigger asChild>
-                <FormControl>
-                  <Button
-                    variant={"outline"}
-                    className={cn(
-                      "w-[240px] pl-3 text-left font-normal",
-                      !field.value && "text-muted-foreground"
-                    )}
-                  >
-                    {(() => {
-                      const date = field.value ? new Date(field.value) : new Date();
-                      return isNaN(date.getTime()) ? (
-                        <span>Pick a date</span>
-                      ) : (
-                        format(date, "PPP")
-                      );
-                    })()}
-                    <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                  </Button>
-                </FormControl>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0" align="start">
-                <Calendar
-                  mode="single"
-                  selected={field.value}
-                  onSelect={field.onChange}
-                  disabled={(date) =>
-                    date > new Date() || date < new Date("1900-01-01")
-                  }
-                  captionLayout="dropdown"
-                />
-              </PopoverContent>
-            </Popover>
+          <FormItem>
+            <FormLabel>Graduation Year</FormLabel>
+            <FormControl>
+              <Input 
+                placeholder="2023" 
+                {...field} 
+              />
+            </FormControl>
             <FormMessage />
           </FormItem>
         )}
       />
       <FormField
         control={control}
-        name="result_documents"
-        render={({ field }) => (
+        name="transcript_documents"
+        render={({ field: { onChange, ...field } }) => (
           <FormItem>
-            <FormLabel>Upload Result Documents</FormLabel>
+            <FormLabel>Upload Transcript Documents</FormLabel>
             <FormControl>
-              <Input type="file" className="cursor-pointer" {...field} />
+              <Input 
+                type="file" 
+                accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
+                className="cursor-pointer" 
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  onChange(file);
+                }}
+                {...field}
+              />
             </FormControl>
             <FormMessage />
           </FormItem>
@@ -122,22 +123,25 @@ export default function Step2() {
       <FormField
         control={control}
         name="passport_photo"
-        render={({ field }) => (
+        render={({ field: { onChange, ...field } }) => (
           <FormItem>
             <FormLabel>Upload Passport Photo</FormLabel>
             <FormControl>
-              <Input type="file" className="cursor-pointer" {...field} />
+              <Input 
+                type="file" 
+                accept=".jpg,.jpeg,.png"
+                className="cursor-pointer" 
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  onChange(file);
+                }}
+                {...field}
+              />
             </FormControl>
             <FormMessage />
           </FormItem>
         )}
       />
-      <div className="flex gap-4">
-        <Button className="w-40 bg-gray-100 text-primary hover:bg-gray-50">
-          Cancel
-        </Button>
-        <Button className="w-40">Save and Continue</Button>
-      </div>
     </div>
   );
 }

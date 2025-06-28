@@ -15,7 +15,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Button } from "@/components/ui/button";
 
 export default function Step1() {
   const { control } = useFormContext();
@@ -23,7 +22,7 @@ export default function Step1() {
     <div className="flex flex-col gap-7 max-w-lg my-4">
       <FormField
         control={control}
-        name="fullname"
+        name="full_name"
         render={({ field }) => (
           <FormItem>
             <FormLabel>Full Name</FormLabel>
@@ -41,7 +40,12 @@ export default function Step1() {
           <FormItem>
             <FormLabel>Age</FormLabel>
             <FormControl>
-              <Input {...field} />
+              <Input 
+                type="number" 
+                placeholder="15" 
+                {...field} 
+                onChange={(e) => field.onChange(parseInt(e.target.value) || 15)}
+              />
             </FormControl>
             <FormDescription>Must be 15 years of age or older</FormDescription>
             <FormMessage />
@@ -85,7 +89,7 @@ export default function Step1() {
       />
       <FormField
         control={control}
-        name="phone"
+        name="phone_number"
         render={({ field }) => (
           <FormItem>
             <FormLabel>Phone number</FormLabel>
@@ -98,7 +102,7 @@ export default function Step1() {
       />
       <FormField
         control={control}
-        name="address"
+        name="residential_address"
         render={({ field }) => (
           <FormItem>
             <FormLabel>Residential Address</FormLabel>
@@ -109,12 +113,6 @@ export default function Step1() {
           </FormItem>
         )}
       />
-      <div className="flex gap-4">
-        <Button className="w-40 bg-gray-100 text-primary hover:bg-gray-50">
-          Cancel
-        </Button>
-        <Button className="w-40">Save and Continue</Button>
-      </div>
     </div>
   );
 }

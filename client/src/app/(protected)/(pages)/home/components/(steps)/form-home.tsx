@@ -1,5 +1,3 @@
-import { Button } from "@/components/ui/button";
-
 export default function FormHome() {
   return (
     <div className="flex flex-col gap-3">
@@ -15,7 +13,6 @@ export default function FormHome() {
         applicant, you&apos;ll communicate with both teams throughout the selection
         process. We look forward to receiving your application!
       </p>
-      <Button className="my-15 md:w-40" onClick={() => {}}>Apply Now</Button>
     </div>
   );
 }

@@ -1,4 +1,3 @@
-import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
   FormControl,
@@ -8,7 +7,6 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useFormContext } from "react-hook-form";
 
@@ -46,7 +44,7 @@ export default function Step3() {
             </FormLabel>
             <FormControl>
               <Input
-                placeholder="(eg Website, Social media , friends)"
+                placeholder="(eg Website, Social media, friends)"
                 {...field}
               />
             </FormControl>
@@ -54,19 +52,25 @@ export default function Step3() {
           </FormItem>
         )}
       />
-      <div className="flex items-center gap-2">
-        <Checkbox id="referral_complete" />
-        <Label htmlFor="referral_complete" className="font-light">
-          How did you first learn about this program? Please provide specific
-          information
-        </Label>
-      </div>
-      <div className="flex gap-4">
-        <Button className="w-40 bg-gray-100 text-primary hover:bg-gray-50">
-          Cancel
-        </Button>
-        <Button className="w-40">Save and Continue</Button>
-      </div>
+      <FormField
+        control={control}
+        name="referral_source_confirmed"
+        render={({ field }) => (
+          <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+            <FormControl>
+              <Checkbox
+                checked={field.value}
+                onCheckedChange={field.onChange}
+              />
+            </FormControl>
+            <div className="space-y-1 leading-none">
+              <FormLabel>
+                I confirm the accuracy of my referral source information
+              </FormLabel>
+            </div>
+          </FormItem>
+        )}
+      />
     </div>
   );
 }

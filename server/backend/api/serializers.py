@@ -31,7 +31,7 @@ class ApplicationSerializer(serializers.ModelSerializer):
             'village',
             'phone_number',
             'residential_address',
-            'category',
+            'scholarship_type',  # Changed from category
             'school',
             'graduation_year',
             'grades',
