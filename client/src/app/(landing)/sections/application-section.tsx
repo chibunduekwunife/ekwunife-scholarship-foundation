@@ -45,7 +45,7 @@ export default function ApplicationSection() {
         <h1 className="text-3xl font-semibold">Apply for Scholarship</h1>
         <span className="text-gray-400">Applications for now are closed.</span>
       </div>
-      <div className="flex w-[80%] md:w-[50%] justify-center">
+      <div className="flex w-[85%] md:w-[50%] justify-center">
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
