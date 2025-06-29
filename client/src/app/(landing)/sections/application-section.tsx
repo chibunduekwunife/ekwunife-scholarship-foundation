@@ -21,6 +21,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import Link from "next/link";
 
 const formSchema = z.object({
   state: z.string({
@@ -44,11 +45,11 @@ export default function ApplicationSection() {
         <h1 className="text-3xl font-semibold">Apply for Scholarship</h1>
         <span className="text-gray-400">Applications for now are closed.</span>
       </div>
-      <div className="flex w-md justify-center">
+      <div className="flex w-[80%] md:w-[50%] justify-center">
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
-            className="w-full max-w-md space-y-6"
+            className="w-full space-y-6"
           >
             <FormField
               control={form.control}
@@ -77,8 +78,11 @@ export default function ApplicationSection() {
                 </FormItem>
               )}
             />
-            <Button type="submit" variant={"secondary"} className="w-full h-12">
-              Apply here
+            <Button type="submit" variant={"secondary"} className="w-full h-12" asChild>
+              <Link
+                href={'/auth/login'}>
+                Apply here
+              </Link>
             </Button>
           </form>
         </Form>

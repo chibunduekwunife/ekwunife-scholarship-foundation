@@ -119,7 +119,7 @@ export default function ApplicationList() {
             My Scholarship Applications ({applications.length})
           </h1>
           <Button 
-            onClick={() => router.push("/home/ssce-scholarship")}
+            onClick={() => router.push("/home/new-application")}
             className="bg-primary"
           >
             New Application
@@ -130,7 +130,7 @@ export default function ApplicationList() {
           <div className="text-center py-10">
             <p className="text-gray-500 mb-4">You have not applied to any scholarships yet</p>
             <Button 
-              onClick={() => router.push("/home/ssce-scholarship")}
+              onClick={() => router.push("/home/new-application")}
               variant="outline"
             >
               Start Your First Application

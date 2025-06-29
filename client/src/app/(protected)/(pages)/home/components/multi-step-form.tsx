@@ -42,7 +42,7 @@ export default function MultiStepForm({ scholarshipId = 1, existingApplication }
     resolver: zodResolver(formSchema),
     defaultValues: {
       full_name: "",
-      age: 15,
+      age: "",
       gender: "",
       village: "",
       phone_number: "",

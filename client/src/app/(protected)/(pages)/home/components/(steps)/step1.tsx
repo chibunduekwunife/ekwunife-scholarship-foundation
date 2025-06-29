@@ -42,9 +42,12 @@ export default function Step1() {
             <FormControl>
               <Input 
                 type="number" 
-                placeholder="15" 
+                placeholder="Enter your age" 
                 {...field} 
-                onChange={(e) => field.onChange(parseInt(e.target.value) || 15)}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  field.onChange(value);
+                }}
               />
             </FormControl>
             <FormDescription>Must be 15 years of age or older</FormDescription>

@@ -5,7 +5,20 @@ export const formSchema = z.object({
   full_name: z.string().min(2, {
     message: "Full name must be at least 2 characters.",
   }),
-  age: z.number().min(15, { message: "Must be at least 15 years old" }),
+  age: z.union([
+    z.string(),
+    z.number()
+  ]).transform((val) => {
+    if (typeof val === 'string') {
+      if (val === '') return undefined;
+      const num = Number(val);
+      return isNaN(num) ? undefined : num;
+    }
+    return val;
+  }).refine((val) => {
+    if (val === undefined) return false;
+    return val >= 15;
+  }, { message: "Age is required and must be at least 15 years old" }),
   gender: z.string().min(1, { message: "Gender is required" }),
   village: z.string().min(1, { message: "Village is required" }),
   phone_number: z
@@ -54,7 +67,7 @@ export type ApplicationFormData = z.infer<typeof formSchema>;
 // Partial schema for saving drafts (all fields optional except required ones)
 export const draftSchema = z.object({
   full_name: z.string().optional(),
-  age: z.number().optional(),
+  age: z.union([z.string(), z.number()]).optional(),
   gender: z.string().optional(),
   village: z.string().optional(),
   phone_number: z.string().optional(),
