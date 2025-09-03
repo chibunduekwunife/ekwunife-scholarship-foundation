@@ -27,7 +27,11 @@ else
     echo "ADMIN_PASSWORD: [not set]"
 fi
 
+echo "Running admin credential update..."
 python manage.py update_admin_credentials
+
+echo "Checking admin user creation..."
+python manage.py check_admin
 
 # Create sample scholarships (if needed)
 echo "🎓 Setting up sample data..."
