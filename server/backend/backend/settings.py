@@ -33,6 +33,33 @@ DEBUG = os.environ.get("DEBUG", "False").lower() == "true"
 
 ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "").split(" ")
 
+# Admin Security Settings
+if not DEBUG:
+    # Production security settings
+    SECURE_ADMIN_ENABLED = True
+    ADMIN_URL_PATH = os.environ.get("ADMIN_URL_PATH", "admin/")
+    
+    # Force HTTPS in production
+    SECURE_SSL_REDIRECT = True
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+    
+    # Security headers
+    SECURE_BROWSER_XSS_FILTER = True
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    X_FRAME_OPTIONS = 'DENY'
+    
+    # Admin session security
+    SESSION_COOKIE_SECURE = True
+    SESSION_COOKIE_HTTPONLY = True
+    SESSION_COOKIE_AGE = 3600  # 1 hour
+    
+    # CSRF protection
+    CSRF_COOKIE_SECURE = True
+    CSRF_COOKIE_HTTPONLY = True
+else:
+    # Development settings
+    ADMIN_URL_PATH = "admin/"
+
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework_simplejwt.authentication.JWTAuthentication",
@@ -164,12 +191,17 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 CORS_ALLOW_ALL_ORIGINS = False
 
-CORS_ALLOWED_ORIGINS = [
-    "https://ekwunife-scholarship-foundation.vercel.app",
-    "http://localhost:3000",  # Next.js default port
-    "http://127.0.0.1:3000",  # Alternative localhost
-    "http://localhost:3001",  # Next.js alternative port
-    "http://127.0.0.1:3001",  # Alternative localhost
-]
+# CORS settings - use environment variable in production
+CORS_ALLOWED_ORIGINS_ENV = os.environ.get("CORS_ALLOWED_ORIGINS", "")
+if CORS_ALLOWED_ORIGINS_ENV:
+    CORS_ALLOWED_ORIGINS = CORS_ALLOWED_ORIGINS_ENV.split(",")
+else:
+    # Default for development
+    CORS_ALLOWED_ORIGINS = [
+        "http://localhost:3000",  # Next.js default port
+        "http://127.0.0.1:3000",  # Alternative localhost
+        "http://localhost:3001",  # Next.js alternative port
+        "http://127.0.0.1:3001",  # Alternative localhost
+    ]
 
 CORS_ALLOWS_CREDENTIALS = True

@@ -1,0 +1,35 @@
+# Render.com configuration for Django backend
+# This file should be in the root of your repository
+
+# Build Configuration
+build:
+  commands:
+    - cd server/backend
+    - pip install -r requirements.txt
+    - python manage.py collectstatic --noinput
+    - python manage.py migrate
+    - python manage.py update_admin_credentials
+
+# Web Service Configuration
+services:
+  - type: web
+    name: ekwunife-backend
+    env: python
+    buildCommand: cd server/backend && ./build.sh
+    startCommand: cd server/backend && gunicorn backend.wsgi:application
+    plan: free
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.3
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: False
+      - key: ALLOWED_HOSTS
+        value: .onrender.com
+      - key: ADMIN_USERNAME
+        value: eksf#@2050
+      - key: ADMIN_PASSWORD
+        value: }}lcm2eksf1&*(30)
+      - key: ADMIN_EMAIL
+        value: admin@ekwunife.org

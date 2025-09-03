@@ -14,6 +14,7 @@ import {
 import { toast } from "sonner";
 import Link from "next/link";
 import { ArrowLeft, Shield } from "lucide-react";
+import { adminLoginFallback } from "@/lib/admin-auth";
 
 export default function AdminLogin() {
   const [credentials, setCredentials] = useState({
@@ -27,17 +28,19 @@ export default function AdminLogin() {
     setIsLoading(true);
 
     try {
-      // TODO: Replace with actual admin authentication logic
-      // For now, we'll redirect directly to Django admin
-      if (credentials.username === "admin" && credentials.password === "admin123") {
-        toast.success("Redirecting to admin panel...");
-        // Redirect to Django admin panel
-        window.open("http://localhost:8001/admin/", "_blank");
+      const result = await adminLoginFallback(credentials.username, credentials.password);
+      
+      if (result.success) {
+        toast.success(result.message);
+        // Open Django admin in new tab
+        if (result.redirectUrl) {
+          window.open(result.redirectUrl, "_blank");
+        }
       } else {
-        toast.error("Invalid admin credentials");
+        toast.error(result.message);
       }
     } catch {
-      toast.error("Login failed. Please try again.");
+      toast.error("Authentication service unavailable. Please try again later.");
     } finally {
       setIsLoading(false);
     }
@@ -104,16 +107,11 @@ export default function AdminLogin() {
               </Button>
             </form>
             
-            <div className="mt-6 p-3 bg-yellow-50 border border-yellow-200 rounded-md">
-              <p className="text-sm text-yellow-800">
-                <strong>Note:</strong> This is restricted to authorized administrators only.
-                Unauthorized access attempts are logged and monitored.
+            <div className="mt-6 p-3 bg-red-50 border border-red-200 rounded-md">
+              <p className="text-sm text-red-800">
+                <strong>⚠️ Restricted Access:</strong> This area is for authorized administrators only.
+                All access attempts are logged and monitored for security purposes.
               </p>
-              <div className="mt-2 text-xs text-yellow-700">
-                <p><strong>Demo credentials:</strong></p>
-                <p>Username: admin</p>
-                <p>Password: admin123</p>
-              </div>
             </div>
           </CardContent>
         </Card>
