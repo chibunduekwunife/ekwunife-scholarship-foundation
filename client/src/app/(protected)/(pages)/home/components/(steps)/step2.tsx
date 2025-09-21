@@ -101,33 +101,49 @@ export default function Step2() {
       <FormField
         control={control}
         name="transcript_documents"
-        render={({ field: { onChange, value, ...field } }) => (
+        render={({ field: { onChange, value = [], ...field } }) => (
           <FormItem>
             <FormLabel>Upload Transcript Documents</FormLabel>
             <FormControl>
-              <div className="space-y-2">
-                <Input 
-                  type="file" 
-                  accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
-                  className="cursor-pointer" 
-                  onChange={(e) => {
-                    const file = e.target.files?.[0];
-                    onChange(file);
-                  }}
-                  // Exclude value prop for file inputs to avoid React warnings
-                  {...field}
-                />
-                {value && (
-                  <div className="flex items-center gap-2 p-2 bg-green-50 border border-green-200 rounded-md">
-                    <div className="w-4 h-4 bg-green-500 rounded-full flex items-center justify-center">
-                      <svg className="w-2 h-2 text-white" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                      </svg>
-                    </div>
-                    <span className="text-sm text-green-700 font-medium">
-                      {value.name}
-                    </span>
-                  </div>
+              <div className="space-y-3">
+                <label className="flex flex-col items-center justify-center w-full border-2 border-dashed rounded-md p-6 text-center hover:border-primary/70 transition cursor-pointer bg-muted/30">
+                  <input
+                    type="file"
+                    multiple
+                    accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
+                    className="hidden"
+                    onChange={(e) => {
+                      const files = Array.from(e.target.files || []);
+                      if (files.length) {
+                        onChange([...(value || []), ...files]);
+                      }
+                      e.target.value = ""; // allow re-upload same file
+                    }}
+                    {...field}
+                  />
+                  <span className="text-sm font-medium text-primary">Browse</span>
+                  <span className="text-xs text-muted-foreground mt-1">or drag & drop files here</span>
+                  <span className="text-[11px] text-muted-foreground mt-2">PDF, DOC, Images</span>
+                </label>
+                {Array.isArray(value) && value.length > 0 && (
+                  <ul className="space-y-2">
+                    {value.map((f: File, idx: number) => (
+                      <li key={idx} className="flex items-center justify-between gap-3 rounded-md border bg-white/50 dark:bg-muted px-3 py-2 text-xs">
+                        <div className="flex flex-col flex-1 min-w-0">
+                          <span className="font-medium truncate">{f.name}</span>
+                          <span className="text-[10px] text-muted-foreground">{(f.size/1024).toFixed(1)} KB</span>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const next = value.filter((_: File, i: number) => i !== idx);
+                            onChange(next.length ? next : undefined);
+                          }}
+                          className="text-destructive hover:underline"
+                        >Remove</button>
+                      </li>
+                    ))}
+                  </ul>
                 )}
               </div>
             </FormControl>
@@ -138,33 +154,49 @@ export default function Step2() {
       <FormField
         control={control}
         name="passport_photo"
-        render={({ field: { onChange, value, ...field } }) => (
+        render={({ field: { onChange, value = [], ...field } }) => (
           <FormItem>
-            <FormLabel>Upload Passport Photo</FormLabel>
+            <FormLabel>Upload Passport Photos</FormLabel>
             <FormControl>
-              <div className="space-y-2">
-                <Input 
-                  type="file" 
-                  accept=".jpg,.jpeg,.png"
-                  className="cursor-pointer" 
-                  onChange={(e) => {
-                    const file = e.target.files?.[0];
-                    onChange(file);
-                  }}
-                  // Exclude value prop for file inputs to avoid React warnings
-                  {...field}
-                />
-                {value && (
-                  <div className="flex items-center gap-2 p-2 bg-green-50 border border-green-200 rounded-md">
-                    <div className="w-4 h-4 bg-green-500 rounded-full flex items-center justify-center">
-                      <svg className="w-2 h-2 text-white" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                      </svg>
-                    </div>
-                    <span className="text-sm text-green-700 font-medium">
-                      {value.name}
-                    </span>
-                  </div>
+              <div className="space-y-3">
+                <label className="flex flex-col items-center justify-center w-full border-2 border-dashed rounded-md p-6 text-center hover:border-primary/70 transition cursor-pointer bg-muted/30">
+                  <input
+                    type="file"
+                    multiple
+                    accept=".jpg,.jpeg,.png,.webp"
+                    className="hidden"
+                    onChange={(e) => {
+                      const files = Array.from(e.target.files || []);
+                      if (files.length) {
+                        onChange([...(value || []), ...files]);
+                      }
+                      e.target.value = "";
+                    }}
+                    {...field}
+                  />
+                  <span className="text-sm font-medium text-primary">Browse</span>
+                  <span className="text-xs text-muted-foreground mt-1">or drag & drop images</span>
+                  <span className="text-[11px] text-muted-foreground mt-2">JPG, PNG, WEBP</span>
+                </label>
+                {Array.isArray(value) && value.length > 0 && (
+                  <ul className="space-y-2">
+                    {value.map((f: File, idx: number) => (
+                      <li key={idx} className="flex items-center justify-between gap-3 rounded-md border bg-white/50 dark:bg-muted px-3 py-2 text-xs">
+                        <div className="flex flex-col flex-1 min-w-0">
+                          <span className="font-medium truncate">{f.name}</span>
+                          <span className="text-[10px] text-muted-foreground">{(f.size/1024).toFixed(1)} KB</span>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const next = value.filter((_: File, i: number) => i !== idx);
+                            onChange(next.length ? next : undefined);
+                          }}
+                          className="text-destructive hover:underline"
+                        >Remove</button>
+                      </li>
+                    ))}
+                  </ul>
                 )}
               </div>
             </FormControl>

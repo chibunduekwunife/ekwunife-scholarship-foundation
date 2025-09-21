@@ -91,11 +91,14 @@ export const createApplication = async (data: ApplicationFormData): Promise<Appl
     // Add all text fields
     Object.entries(data).forEach(([key, value]) => {
       if (key === 'transcript_documents' || key === 'passport_photo') {
-        if (value instanceof File) {
-          console.log(`Adding file ${key}:`, value.name, value.size);
-          formData.append(key, value);
-        } else {
-          console.log(`Skipping ${key}: not a file or undefined`);
+        if (Array.isArray(value)) {
+          value.forEach(file => {
+            if (file && typeof file === 'object' && 'name' in file) {
+              formData.append(key, file as File);
+            }
+          });
+        } else if (value && typeof value === 'object' && 'name' in value) {
+          formData.append(key, value as File);
         }
       } else if (key === 'grades') {
         console.log(`Adding grades:`, value);
@@ -150,11 +153,14 @@ export const updateApplication = async (id: number, data: Partial<ApplicationFor
     // Add all fields to FormData
     Object.entries(data).forEach(([key, value]) => {
       if (key === 'transcript_documents' || key === 'passport_photo') {
-        if (value instanceof File) {
-          console.log(`Adding file ${key}:`, value.name, value.size);
-          formData.append(key, value);
-        } else {
-          console.log(`Skipping ${key}: not a file or undefined`);
+        if (Array.isArray(value)) {
+          value.forEach(file => {
+            if (file && typeof file === 'object' && 'name' in file) {
+              formData.append(key, file as File);
+            }
+          });
+        } else if (value && typeof value === 'object' && 'name' in value) {
+          formData.append(key, value as File);
         }
       } else if (key === 'grades') {
         console.log(`Adding grades:`, value);

@@ -35,8 +35,8 @@ export const formSchema = z.object({
     .string()
     .min(1, { message: "Graduation year is required" }),
   grades: z.array(z.string()).default([]),
-  transcript_documents: z.instanceof(File).optional(),
-  passport_photo: z.instanceof(File).optional(),
+  transcript_documents: z.array(z.instanceof(File)).optional(),
+  passport_photo: z.array(z.instanceof(File)).optional(),
   
   // Step 3 - Essay and Referral (matches backend)
   essay: z
@@ -92,8 +92,8 @@ export const draftSchema = z.object({
   school: z.string().optional(),
   graduation_year: z.string().optional(),
   grades: z.array(z.string()).default([]),
-  transcript_documents: z.instanceof(File).optional(),
-  passport_photo: z.instanceof(File).optional(),
+  transcript_documents: z.array(z.instanceof(File)).optional(),
+  passport_photo: z.array(z.instanceof(File)).optional(),
   essay: z.string().optional(),
   referral_source: z.string().optional(),
   referral_source_confirmed: z.boolean().default(false),
