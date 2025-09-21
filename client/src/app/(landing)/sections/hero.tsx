@@ -7,8 +7,7 @@ export default function HeroSection() {
       <div className="flex flex-col items-center text-center md:items-start md:text-start gap-y-3 w-[100%] md:w-[45%]">
         <h1 className="text-4xl md:text-5xl font-extrabold">Rewarding Excellence. Empowering Futures</h1>
         <p className="font-semibold text-lg">
-          Celebrating the legacy of Christopher Ekwunife and Cyprian
-          Okafor Agu by nurturing future leaders through academic excellence.
+          Celebrating the legacy of Christopher Ekwunife by nurturing future leaders through academic excellence.
         </p>
         <Button className="mt-5 w-[250px] md:w-[150px]">Apply Here</Button>
       </div>
