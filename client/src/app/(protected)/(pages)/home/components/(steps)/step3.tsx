@@ -11,7 +11,28 @@ import { Textarea } from "@/components/ui/textarea";
 import { useFormContext } from "react-hook-form";
 
 export default function Step3() {
-  const { control } = useFormContext();
+  const { control, watch } = useFormContext();
+  
+  // Watch the essay field to count words in real-time
+  const essayText = watch("essay") || "";
+  
+  // Function to count words
+  const countWords = (text: string): number => {
+    if (!text || text.trim() === "") return 0;
+    return text.trim().split(/\s+/).length;
+  };
+  
+  const wordCount = countWords(essayText);
+  const maxWords = 500;
+  const minWords = 100;
+  
+  // Determine color based on word count
+  const getWordCountColor = () => {
+    if (wordCount < minWords) return "text-orange-600";
+    if (wordCount > maxWords) return "text-red-600";
+    return "text-green-600";
+  };
+
   return (
     <div className="flex flex-col gap-7 max-w-lg my-4">
       <FormField
@@ -29,6 +50,16 @@ export default function Step3() {
                 {...field}
               />
             </FormControl>
+            <div className="flex justify-between items-center mt-2">
+              <div className={`text-sm font-medium ${getWordCountColor()}`}>
+                {wordCount} / {maxWords} words
+              </div>
+              <div className="text-xs text-gray-500">
+                {wordCount < minWords ? `${minWords - wordCount} words needed` : 
+                 wordCount > maxWords ? `${wordCount - maxWords} words over limit` : 
+                 "Perfect length!"}
+              </div>
+            </div>
             <FormMessage />
           </FormItem>
         )}
