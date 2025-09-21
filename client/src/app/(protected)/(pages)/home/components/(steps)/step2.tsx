@@ -101,7 +101,7 @@ export default function Step2() {
       <FormField
         control={control}
         name="transcript_documents"
-        render={({ field: { onChange, ...field } }) => (
+        render={({ field: { onChange, value, ...field } }) => (
           <FormItem>
             <FormLabel>Upload Transcript Documents</FormLabel>
             <FormControl>
@@ -113,9 +113,15 @@ export default function Step2() {
                   const file = e.target.files?.[0];
                   onChange(file);
                 }}
+                // Exclude value prop for file inputs to avoid React warnings
                 {...field}
               />
             </FormControl>
+            {value && (
+              <p className="text-sm text-gray-600 mt-1">
+                Selected: {value.name}
+              </p>
+            )}
             <FormMessage />
           </FormItem>
         )}
@@ -123,7 +129,7 @@ export default function Step2() {
       <FormField
         control={control}
         name="passport_photo"
-        render={({ field: { onChange, ...field } }) => (
+        render={({ field: { onChange, value, ...field } }) => (
           <FormItem>
             <FormLabel>Upload Passport Photo</FormLabel>
             <FormControl>
@@ -135,9 +141,15 @@ export default function Step2() {
                   const file = e.target.files?.[0];
                   onChange(file);
                 }}
+                // Exclude value prop for file inputs to avoid React warnings
                 {...field}
               />
             </FormControl>
+            {value && (
+              <p className="text-sm text-gray-600 mt-1">
+                Selected: {value.name}
+              </p>
+            )}
             <FormMessage />
           </FormItem>
         )}
