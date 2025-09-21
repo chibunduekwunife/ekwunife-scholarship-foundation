@@ -121,10 +121,69 @@ export default function MultiStepForm({ scholarshipId = 1, existingApplication }
   };
 
   // Submit application
-  const onSubmit = form.handleSubmit(async (values: ApplicationFormData) => {
+  const onSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    // Trigger validation on all fields
+    const isValid = await form.trigger();
+    
+    if (!isValid) {
+      // Get all form errors
+      const errors = form.formState.errors;
+      const errorMessages: string[] = [];
+      
+      // Map field names to user-friendly names and their step locations
+      const fieldToStepMapping: Record<string, {stepName: string, fieldName: string}> = {
+        full_name: { stepName: "Personal Information", fieldName: "Full Name" },
+        age: { stepName: "Personal Information", fieldName: "Age" },
+        gender: { stepName: "Personal Information", fieldName: "Gender" },
+        village: { stepName: "Personal Information", fieldName: "Village or Town" },
+        phone_number: { stepName: "Personal Information", fieldName: "Phone Number" },
+        residential_address: { stepName: "Personal Information", fieldName: "Residential Address" },
+        scholarship_type: { stepName: "Academic Background", fieldName: "Scholarship" },
+        school: { stepName: "Academic Background", fieldName: "School Attended" },
+        graduation_year: { stepName: "Academic Background", fieldName: "Graduation Year" },
+        essay: { stepName: "Essay", fieldName: "Essay" },
+        referral_source: { stepName: "Essay", fieldName: "Referral Source" },
+      };
+      
+      // Collect error messages with step and field information
+      Object.keys(errors).forEach(fieldName => {
+        const error = errors[fieldName as keyof typeof errors];
+        const mapping = fieldToStepMapping[fieldName];
+        
+        if (error && mapping) {
+          const errorMessage = error.message || "This field is required";
+          errorMessages.push(`${mapping.stepName} - ${mapping.fieldName}: ${errorMessage}`);
+        }
+      });
+      
+      if (errorMessages.length > 0) {
+        const fullErrorMessage = `Please fix the following errors:\n\n${errorMessages.join('\n')}`;
+        toast.error(fullErrorMessage, {
+          duration: 8000, // Show for 8 seconds
+          style: {
+            maxWidth: '500px',
+            whiteSpace: 'pre-line' // Allow line breaks in the message
+          }
+        });
+      } else {
+        toast.error("Please check all required fields and try again.");
+      }
+      
+      return;
+    }
+    
+    // If validation passes, proceed with submission
     setIsSubmitting(true);
     try {
+      const values = form.getValues() as ApplicationFormData;
       values.status = "pending"; // Change status to pending on submit
+      
+      // Ensure age is a number
+      if (typeof values.age === 'string') {
+        values.age = parseInt(values.age, 10);
+      }
       
       // Set scholarship ID based on scholarship_type dynamically
       const selectedScholarship = scholarships.find(scholarship => 
@@ -161,7 +220,7 @@ export default function MultiStepForm({ scholarshipId = 1, existingApplication }
     } finally {
       setIsSubmitting(false);
     }
-  });
+  };
 
   const TabContent =
     tab_buttons.find((tab) => tab.value === currentTab)?.content || null;
