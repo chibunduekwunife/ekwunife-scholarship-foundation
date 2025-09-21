@@ -42,6 +42,14 @@ class ApplicationListCreate(generics.ListCreateAPIView):
                 scholarship = Scholarship.objects.first()
                 
             serializer.save(applicant=self.request.user, scholarship=scholarship)
+            app_instance = serializer.instance
+            # Handle multiple uploads
+            for f in self.request.FILES.getlist('transcript_documents'):
+                from .models import ApplicationTranscript
+                ApplicationTranscript.objects.create(application=app_instance, file=f)
+            for img in self.request.FILES.getlist('passport_photo'):
+                from .models import ApplicationPassportPhoto
+                ApplicationPassportPhoto.objects.create(application=app_instance, image=img)
         else:
             print("Serializer errors:", serializer.errors)
             
@@ -112,3 +120,11 @@ class ApplicationDetail(generics.RetrieveUpdateAPIView):
                 scholarship = Scholarship.objects.first()
                 
             serializer.save(scholarship=scholarship)
+            app_instance = serializer.instance
+            # Add new files if provided
+            for f in self.request.FILES.getlist('transcript_documents'):
+                from .models import ApplicationTranscript
+                ApplicationTranscript.objects.create(application=app_instance, file=f)
+            for img in self.request.FILES.getlist('passport_photo'):
+                from .models import ApplicationPassportPhoto
+                ApplicationPassportPhoto.objects.create(application=app_instance, image=img)

@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
-from .models import Scholarship, Application
+from .models import Scholarship, Application, ApplicationTranscript, ApplicationPassportPhoto
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -17,7 +17,20 @@ class ScholarshipSerializer(serializers.ModelSerializer):
         model = Scholarship
         fields = ["id", "name", "description", "eligibility_criteria", "required_documents", "deadline"]
 
+class ApplicationTranscriptSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ApplicationTranscript
+        fields = ['id', 'file', 'uploaded_at']
+
+class ApplicationPassportPhotoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ApplicationPassportPhoto
+        fields = ['id', 'image', 'uploaded_at']
+
 class ApplicationSerializer(serializers.ModelSerializer):
+    transcript_files = ApplicationTranscriptSerializer(many=True, read_only=True)
+    passport_photos = ApplicationPassportPhotoSerializer(many=True, read_only=True)
+
     class Meta:
         model = Application
         fields = [
@@ -37,6 +50,8 @@ class ApplicationSerializer(serializers.ModelSerializer):
             'grades',
             'transcript_documents',
             'passport_photo',
+            'transcript_files',
+            'passport_photos',
             'essay',
             'referral_source',
             'referral_source_confirmed',

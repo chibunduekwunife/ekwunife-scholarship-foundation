@@ -49,3 +49,19 @@ class Application(models.Model):
 
     def __str__(self):
         return self.full_name
+
+class ApplicationPassportPhoto(models.Model):
+    application = models.ForeignKey('Application', on_delete=models.CASCADE, related_name='passport_photos')
+    image = models.ImageField(upload_to='passports/')
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"PassportPhoto({self.id}) for {self.application.full_name}"
+
+class ApplicationTranscript(models.Model):
+    application = models.ForeignKey('Application', on_delete=models.CASCADE, related_name='transcript_files')
+    file = models.FileField(upload_to='results/')
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Transcript({self.id}) for {self.application.full_name}"

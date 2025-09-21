@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.utils import timezone
-from .models import Scholarship, Application
+from .models import Scholarship, Application, ApplicationTranscript, ApplicationPassportPhoto
 
 @admin.register(Scholarship)
 class ScholarshipAdmin(admin.ModelAdmin):
@@ -20,12 +20,25 @@ class ScholarshipAdmin(admin.ModelAdmin):
         }),
     )
 
+class TranscriptInline(admin.TabularInline):
+    model = ApplicationTranscript
+    extra = 0
+    fields = ('file', 'uploaded_at')
+    readonly_fields = ('uploaded_at',)
+
+class PassportPhotoInline(admin.TabularInline):
+    model = ApplicationPassportPhoto
+    extra = 0
+    fields = ('image', 'uploaded_at')
+    readonly_fields = ('uploaded_at',)
+
 @admin.register(Application)
 class ApplicationAdmin(admin.ModelAdmin):
     list_display = ['full_name', 'scholarship', 'status', 'age', 'village', 'submitted_at']
     list_filter = ['status', 'scholarship', 'gender', 'village', 'submitted_at']
     search_fields = ['full_name', 'phone_number', 'school']
     readonly_fields = ['submitted_at']
+    inlines = [TranscriptInline, PassportPhotoInline]
     
     fieldsets = (
         ('Personal Information', {
