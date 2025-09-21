@@ -56,7 +56,7 @@ export default function ApplicationSection() {
               name="state"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Select State</FormLabel>
+                  <FormLabel>Select State <span className="text-red-500">*</span></FormLabel>
                   <Select
                     onValueChange={field.onChange}
                     defaultValue={field.value}

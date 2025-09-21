@@ -41,7 +41,7 @@ export default function Step3() {
         render={({ field }) => (
           <FormItem>
             <FormLabel>
-              &quot;Why I deserve This Scholarship&quot; or &quot;My Academic Journey&quot;
+              &quot;Why I deserve This Scholarship&quot; or &quot;My Academic Journey&quot; <span className="text-red-500">*</span>
             </FormLabel>
             <FormControl>
               <Textarea
@@ -71,7 +71,7 @@ export default function Step3() {
           <FormItem>
             <FormLabel>
               How did you first learn about this program? Please provide
-              specific information.
+              specific information. <span className="text-red-500">*</span>
             </FormLabel>
             <FormControl>
               <Input

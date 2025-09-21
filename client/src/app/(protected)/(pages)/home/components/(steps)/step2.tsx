@@ -50,7 +50,7 @@ export default function Step2() {
         name="scholarship_type"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Scholarship</FormLabel>
+            <FormLabel>Scholarship <span className="text-red-500">*</span></FormLabel>
             <Select onValueChange={field.onChange} defaultValue={field.value}>
               <FormControl>
                 <SelectTrigger>
@@ -74,7 +74,7 @@ export default function Step2() {
         name="school"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>School attended</FormLabel>
+            <FormLabel>School attended <span className="text-red-500">*</span></FormLabel>
             <FormControl>
               <Input placeholder="Enter your school name" {...field} />
             </FormControl>
@@ -87,7 +87,7 @@ export default function Step2() {
         name="graduation_year"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Graduation Year</FormLabel>
+            <FormLabel>Graduation Year <span className="text-red-500">*</span></FormLabel>
             <FormControl>
               <Input 
                 placeholder="2023" 

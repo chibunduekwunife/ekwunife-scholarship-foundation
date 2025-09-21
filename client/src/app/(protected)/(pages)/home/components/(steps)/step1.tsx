@@ -25,7 +25,7 @@ export default function Step1() {
         name="full_name"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Full Name</FormLabel>
+            <FormLabel>Full Name <span className="text-red-500">*</span></FormLabel>
             <FormControl>
               <Input placeholder="Enter your full name" {...field} />
             </FormControl>
@@ -38,7 +38,7 @@ export default function Step1() {
         name="age"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Age</FormLabel>
+            <FormLabel>Age <span className="text-red-500">*</span></FormLabel>
             <FormControl>
               <Input 
                 type="number" 
@@ -60,7 +60,7 @@ export default function Step1() {
         name="gender"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Gender</FormLabel>
+            <FormLabel>Gender <span className="text-red-500">*</span></FormLabel>
             <Select onValueChange={field.onChange} defaultValue={field.value}>
               <FormControl>
                 <SelectTrigger>
@@ -82,7 +82,7 @@ export default function Step1() {
         name="village"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Village or Town</FormLabel>
+            <FormLabel>Village or Town <span className="text-red-500">*</span></FormLabel>
             <FormControl>
               <Input placeholder="Enter your village or town" {...field} />
             </FormControl>
@@ -95,7 +95,7 @@ export default function Step1() {
         name="phone_number"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Phone number</FormLabel>
+            <FormLabel>Phone number <span className="text-red-500">*</span></FormLabel>
             <FormControl>
               <Input placeholder="9034758949" {...field} />
             </FormControl>
@@ -108,7 +108,7 @@ export default function Step1() {
         name="residential_address"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Residential Address</FormLabel>
+            <FormLabel>Residential Address <span className="text-red-500">*</span></FormLabel>
             <FormControl>
               <Input placeholder="Home Address" {...field} />
             </FormControl>

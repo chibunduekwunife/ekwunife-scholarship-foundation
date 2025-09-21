@@ -156,7 +156,7 @@ export default function AuthForm({
                 name="username"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Username</FormLabel>
+                    <FormLabel>Username <span className="text-red-500">*</span></FormLabel>
                     <FormControl>
                       <Input placeholder="Username" {...field} />
                     </FormControl>
@@ -170,7 +170,7 @@ export default function AuthForm({
                   name="email"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Email</FormLabel>
+                      <FormLabel>Email <span className="text-red-500">*</span></FormLabel>
                       <FormControl>
                         <Input placeholder="Email" {...field} />
                       </FormControl>
@@ -184,7 +184,7 @@ export default function AuthForm({
                 name="password"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Password</FormLabel>
+                    <FormLabel>Password <span className="text-red-500">*</span></FormLabel>
                     <FormControl>
                       <Input placeholder="Password" {...field} />
                     </FormControl>
@@ -198,7 +198,7 @@ export default function AuthForm({
                   name="confirmPassword"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Confirm Password</FormLabel>
+                      <FormLabel>Confirm Password <span className="text-red-500">*</span></FormLabel>
                       <FormControl>
                         <Input
                           type="password"
