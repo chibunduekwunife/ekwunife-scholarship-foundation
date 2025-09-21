@@ -12,22 +12,18 @@ export default function HeroSection() {
         </p>
         <Button className="mt-5 w-[250px] md:w-[150px]">Apply Here</Button>
       </div>
-      <div className="hidden md:flex w-[55%] justify-end ">
-        <div className="relative flex items-center">
-            <Image 
-            width={350}
-            height={350}
-            alt="businessman 1"
-            src="/man1.png"
-            className="z-10" 
-        />
-        <Image 
-            width={357}
-            height={357}
-            alt="businessman 2"
-            src="/man2.png" 
-            className="-ml-30 z-20"
-        />
+      <div className="hidden md:flex w-[55%] justify-end">
+        {/* Full illustration shown (no cropping) at maximum safe size */}
+        <div className="relative w-full max-w-[700px] xl:max-w-[760px] flex justify-center">
+          <Image
+            src="/people3.svg"
+            alt="Scholars"
+            width={760}
+            height={760}
+            priority
+            className="w-full h-auto object-contain select-none pointer-events-none"
+            sizes="(min-width: 1280px) 760px, (min-width: 1024px) 700px, 60vw"
+          />
         </div>
       </div>
     </div>

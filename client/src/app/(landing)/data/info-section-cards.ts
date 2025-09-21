@@ -4,21 +4,21 @@ export const info_cards = [
     title: "Who can Apply",
     description:
       "Are you eligible for a scholarship? Learn more about Ekwunife scholarship foundation eligibility and work experience requirements.",
-    src: "/woman_on_laptop.jpg",
+    src: "/black_applicant.png", // updated
   },
   {
     id: 2,
     title: "Application Guidance",
     description:
       "Before you submit your application, we encourage you to review the provided guidelines carefully.",
-    src: "/meeting.jpg",
+    src: "/black_meeting.png", // updated
   },
   {
     id: 3,
     title: "Explore Master’s Programs",
     description:
       "Looking for the right course to support your application? Our course finder is designed to simplify your search.",
-    src: "/study.jpg",
+    src: "/black_students.png", // updated
   },
   {
     id: 4,
