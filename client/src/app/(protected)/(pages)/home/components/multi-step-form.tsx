@@ -36,6 +36,7 @@ export default function MultiStepForm({ scholarshipId = 1, existingApplication }
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [scholarships, setScholarships] = useState<Scholarship[]>([]);
+  const [validationErrors, setValidationErrors] = useState<string[]>([]);
   const router = useRouter();
 
   const form = useForm({
@@ -124,6 +125,9 @@ export default function MultiStepForm({ scholarshipId = 1, existingApplication }
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
+    // Clear previous validation errors
+    setValidationErrors([]);
+    
     // Trigger validation on all fields
     const isValid = await form.trigger();
     
@@ -158,47 +162,8 @@ export default function MultiStepForm({ scholarshipId = 1, existingApplication }
         }
       });
       
-      if (errorMessages.length > 0) {
-        const fullErrorMessage = `🚨 FORM VALIDATION ERRORS\n\n${errorMessages.join('\n\n')}\n\n⚠️  Please fix these issues before submitting your application.`;
-        toast.error(fullErrorMessage, {
-          duration: 12000, // Show for 12 seconds
-          style: {
-            maxWidth: '600px',
-            width: '90vw',
-            padding: '16px',
-            borderRadius: '6px',
-            border: '1px solid #dc2626',
-            backgroundColor: '#fef2f2',
-            color: '#7f1d1d',
-            fontSize: '14px',
-            fontWeight: 'normal',
-            whiteSpace: 'pre-line',
-            boxShadow: 'none',
-            position: 'relative',
-            margin: '16px',
-          },
-          position: 'top-center',
-          icon: '⚠️',
-        });
-      } else {
-        toast.error("❌ VALIDATION ERROR\n\nPlease check all required fields and try again.", {
-          style: {
-            border: '1px solid #dc2626',
-            backgroundColor: '#fef2f2',
-            color: '#7f1d1d',
-            fontWeight: 'normal',
-            padding: '16px',
-            borderRadius: '6px',
-            whiteSpace: 'pre-line',
-            boxShadow: 'none',
-            width: '90vw',
-            maxWidth: '500px',
-          },
-          position: 'top-center',
-          icon: '⚠️',
-        });
-      }
-      
+      // Set validation errors to display inline
+      setValidationErrors(errorMessages);
       return;
     }
     
@@ -289,6 +254,32 @@ export default function MultiStepForm({ scholarshipId = 1, existingApplication }
             <form onSubmit={onSubmit} className="space-y-8">
               {TabContent && <TabContent />}
               
+              {/* Validation Errors Display */}
+              {validationErrors.length > 0 && isLastStep && (
+                <div className="p-4 border border-red-600 bg-red-50 rounded-md">
+                  <div className="flex items-start">
+                    <div className="flex-shrink-0">
+                      <span className="text-red-500 text-lg">⚠️</span>
+                    </div>
+                    <div className="ml-3">
+                      <h3 className="text-sm font-medium text-red-800">
+                        Form Validation Errors
+                      </h3>
+                      <div className="mt-2 text-sm text-red-700">
+                        <ul className="list-none space-y-1">
+                          {validationErrors.map((error, index) => (
+                            <li key={index}>{error}</li>
+                          ))}
+                        </ul>
+                        <p className="mt-3 text-sm text-red-600">
+                          Please fix these issues before submitting your application.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+              
               {/* Form Actions */}
               <div className="flex gap-4 pt-6">
                 {!isLastStep && (
@@ -323,6 +314,32 @@ export default function MultiStepForm({ scholarshipId = 1, existingApplication }
         <Form {...form}>
           <form onSubmit={onSubmit} className="space-y-8">
             {TabContent && <TabContent />}
+            
+            {/* Validation Errors Display */}
+            {validationErrors.length > 0 && isLastStep && (
+              <div className="p-4 border border-red-600 bg-red-50 rounded-md">
+                <div className="flex items-start">
+                  <div className="flex-shrink-0">
+                    <span className="text-red-500 text-lg">⚠️</span>
+                  </div>
+                  <div className="ml-3">
+                    <h3 className="text-sm font-medium text-red-800">
+                      Form Validation Errors
+                    </h3>
+                    <div className="mt-2 text-sm text-red-700">
+                      <ul className="list-none space-y-1">
+                        {validationErrors.map((error, index) => (
+                          <li key={index}>{error}</li>
+                        ))}
+                      </ul>
+                      <p className="mt-3 text-sm text-red-600">
+                        Please fix these issues before submitting your application.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
             
             {/* Form Actions */}
             <div className="flex flex-col gap-4 pt-6">
