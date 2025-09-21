@@ -154,21 +154,45 @@ export default function MultiStepForm({ scholarshipId = 1, existingApplication }
         
         if (error && mapping) {
           const errorMessage = error.message || "This field is required";
-          errorMessages.push(`${mapping.stepName} - ${mapping.fieldName}: ${errorMessage}`);
+          errorMessages.push(`📍 ${mapping.stepName} ➜ ${mapping.fieldName}: ${errorMessage}`);
         }
       });
       
       if (errorMessages.length > 0) {
-        const fullErrorMessage = `Please fix the following errors:\n\n${errorMessages.join('\n')}`;
+        const fullErrorMessage = `🚨 FORM VALIDATION ERRORS\n\n${errorMessages.join('\n\n')}\n\n⚠️  Please fix these issues before submitting your application.`;
         toast.error(fullErrorMessage, {
-          duration: 8000, // Show for 8 seconds
+          duration: 12000, // Show for 12 seconds
           style: {
-            maxWidth: '500px',
-            whiteSpace: 'pre-line' // Allow line breaks in the message
-          }
+            maxWidth: '650px',
+            minWidth: '450px',
+            padding: '20px',
+            borderRadius: '12px',
+            border: '3px solid #dc2626',
+            backgroundColor: '#fef2f2',
+            color: '#7f1d1d',
+            fontSize: '14px',
+            fontWeight: '500',
+            whiteSpace: 'pre-line',
+            boxShadow: '0 20px 25px -5px rgba(220, 38, 38, 0.15), 0 10px 10px -5px rgba(220, 38, 38, 0.1)',
+            position: 'relative',
+          },
+          className: 'error-toast',
+          icon: '❌',
         });
       } else {
-        toast.error("Please check all required fields and try again.");
+        toast.error("❌ VALIDATION ERROR\n\nPlease check all required fields and try again.", {
+          style: {
+            border: '3px solid #dc2626',
+            backgroundColor: '#fef2f2',
+            color: '#7f1d1d',
+            fontWeight: '600',
+            padding: '16px',
+            borderRadius: '12px',
+            whiteSpace: 'pre-line',
+          },
+          icon: '⚠️',
+          className: 'error-toast',
+        });
       }
       
       return;
