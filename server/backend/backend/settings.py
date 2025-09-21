@@ -190,19 +190,47 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-CORS_ALLOW_ALL_ORIGINS = False
-
 # CORS settings - use environment variable in production
 CORS_ALLOWED_ORIGINS_ENV = os.environ.get("CORS_ALLOWED_ORIGINS", "")
 if CORS_ALLOWED_ORIGINS_ENV:
     CORS_ALLOWED_ORIGINS = CORS_ALLOWED_ORIGINS_ENV.split(",")
 else:
-    # Default for development
+    # Default for development and fallback
     CORS_ALLOWED_ORIGINS = [
         "http://localhost:3000",  # Next.js default port
         "http://127.0.0.1:3000",  # Alternative localhost
         "http://localhost:3001",  # Next.js alternative port
         "http://127.0.0.1:3001",  # Alternative localhost
+        "https://ekwunifescholarship.com",  # Production custom domain
+        "https://ekwunife-scholarship-foundation.vercel.app",  # Vercel domain
     ]
 
+# For production debugging - temporarily allow all origins if environment variable not set
+if not CORS_ALLOWED_ORIGINS_ENV and not DEBUG:
+    CORS_ALLOW_ALL_ORIGINS = True
+else:
+    CORS_ALLOW_ALL_ORIGINS = False
+
 CORS_ALLOWS_CREDENTIALS = True
+
+# Additional CORS headers for frontend compatibility
+CORS_ALLOW_HEADERS = [
+    "accept",
+    "accept-encoding",
+    "authorization",
+    "content-type",
+    "dnt",
+    "origin",
+    "user-agent",
+    "x-csrftoken",
+    "x-requested-with",
+]
+
+CORS_ALLOW_METHODS = [
+    "DELETE",
+    "GET",
+    "OPTIONS",
+    "PATCH",
+    "POST",
+    "PUT",
+]
