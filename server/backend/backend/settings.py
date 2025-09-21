@@ -15,6 +15,7 @@ from datetime import timedelta
 from dotenv import load_dotenv
 import dj_database_url
 import os
+import re  # added for splitting host/origin env vars
 
 load_dotenv()
 
@@ -31,35 +32,33 @@ SECRET_KEY = os.environ.get("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get("DEBUG", "False").lower() == "true"
 
-ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "").split(" ")
-
-# Admin Security Settings
-if not DEBUG:
-    # Production security settings
-    SECURE_ADMIN_ENABLED = True
-    ADMIN_URL_PATH = os.environ.get("ADMIN_URL_PATH", "admin/")
-    
-    # Force HTTPS in production
-    SECURE_SSL_REDIRECT = True
-    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-    
-    # Security headers
-    SECURE_BROWSER_XSS_FILTER = True
-    SECURE_CONTENT_TYPE_NOSNIFF = True
-    X_FRAME_OPTIONS = 'DENY'
-    
-    # Admin session security
-    SESSION_COOKIE_SECURE = True
-    SESSION_COOKIE_HTTPONLY = True
-    SESSION_COOKIE_AGE = 3600  # 1 hour
-    
-    # CSRF protection
-    CSRF_COOKIE_SECURE = True
-    CSRF_COOKIE_HTTPONLY = True
+# --- ALLOWED_HOSTS / CSRF TRUSTED ORIGINS (secure defaults) ---
+ALLOWED_HOSTS_ENV = os.environ.get("ALLOWED_HOSTS", "").strip()
+if ALLOWED_HOSTS_ENV:
+    ALLOWED_HOSTS = [h for h in re.split(r"[\s,]+", ALLOWED_HOSTS_ENV) if h]
 else:
-    # Development settings
-    ADMIN_URL_PATH = "admin/"
+    # Secure fallback list (NO wildcard) – adjust as needed
+    ALLOWED_HOSTS = [
+        "localhost",
+        "127.0.0.1",
+        "ekwunife-scholarship-foundation-app.onrender.com",
+        "ekwunifescholarship.com",
+        "www.ekwunifescholarship.com",
+        "ekwunife-scholarship-foundation.vercel.app",
+    ]
 
+# Django 4+ requires explicit scheme for CSRF_TRUSTED_ORIGINS
+CSRF_TRUSTED_ORIGINS_ENV = os.environ.get("CSRF_TRUSTED_ORIGINS", "").strip()
+if CSRF_TRUSTED_ORIGINS_ENV:
+    CSRF_TRUSTED_ORIGINS = [o for o in re.split(r"[\s,]+", CSRF_TRUSTED_ORIGINS_ENV) if o]
+else:
+    CSRF_TRUSTED_ORIGINS = [
+        "https://ekwunifescholarship.com",
+        "https://www.ekwunifescholarship.com",
+        "https://ekwunife-scholarship-foundation.vercel.app",
+        "https://ekwunife-scholarship-foundation-app.onrender.com",
+    ]
+# ...existing code...
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework_simplejwt.authentication.JWTAuthentication",
@@ -68,152 +67,22 @@ REST_FRAMEWORK = {
         "rest_framework.permissions.IsAuthenticated",
     ],
 }
-
-SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=30),
-    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
-}
-
-# Application definition
-
-INSTALLED_APPS = [
-    "django.contrib.admin",
-    "django.contrib.auth",
-    "django.contrib.contenttypes",
-    "django.contrib.sessions",
-    "django.contrib.messages",
-    "django.contrib.staticfiles",
-    "api",
-    "rest_framework",
-    "corsheaders",
-]
-
-MIDDLEWARE = [
-    "corsheaders.middleware.CorsMiddleware",
-    "django.middleware.security.SecurityMiddleware",
-    "whitenoise.middleware.WhiteNoiseMiddleware",
-    "django.contrib.sessions.middleware.SessionMiddleware",
-    "django.middleware.common.CommonMiddleware",
-    "django.middleware.csrf.CsrfViewMiddleware",
-    "django.contrib.auth.middleware.AuthenticationMiddleware",
-    "django.contrib.messages.middleware.MessageMiddleware",
-    "django.middleware.clickjacking.XFrameOptionsMiddleware",
-]
-
-ROOT_URLCONF = "backend.urls"
-
-TEMPLATES = [
-    {
-        "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
-        "APP_DIRS": True,
-        "OPTIONS": {
-            "context_processors": [
-                "django.template.context_processors.debug",
-                "django.template.context_processors.request",
-                "django.contrib.auth.context_processors.auth",
-                "django.contrib.messages.context_processors.messages",
-            ],
-        },
-    },
-]
-
-WSGI_APPLICATION = "backend.wsgi.application"
-
-
-# Database
-# https://docs.djangoproject.com/en/4.2/ref/settings/#databases
-
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / 'db.sqlite3',
-        "USER": os.getenv("DB_USER"),
-        "PASSWORD": os.getenv("DB_PWD"),
-        "HOST": os.getenv("DB_HOST"),
-        "PORT": os.getenv("DB_PORT"),
-    }
-}
-
-database_url = os.environ.get("DATABASE_URL")
-if database_url:
-    DATABASES["default"] = dj_database_url.parse(database_url)
-
-# Password validation
-# https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
-
-AUTH_PASSWORD_VALIDATORS = [
-    {
-        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
-    },
-    {
-        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
-    },
-    {
-        "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
-    },
-    {
-        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
-    },
-]
-
-
-# Internationalization
-# https://docs.djangoproject.com/en/4.2/topics/i18n/
-
-LANGUAGE_CODE = "en-us"
-
-TIME_ZONE = "UTC"
-
-USE_I18N = True
-
-USE_TZ = True
-
-
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/4.2/howto/static-files/
-
-STATIC_URL = "static/"
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-
-# Additional static files directories (if you have any)
-STATICFILES_DIRS = [
-    # Add any additional static files directories here if needed
-]
-
-# Media files (user uploads)
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-
-# Default primary key field type
-# https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
-
-DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
-
-# CORS settings - use environment variable in production
-CORS_ALLOWED_ORIGINS_ENV = os.environ.get("CORS_ALLOWED_ORIGINS", "")
+# ...existing code...
+# ---------------- CORS CONFIG (locked down) ----------------
+CORS_ALLOWED_ORIGINS_ENV = os.environ.get("CORS_ALLOWED_ORIGINS", "").strip()
 if CORS_ALLOWED_ORIGINS_ENV:
-    CORS_ALLOWED_ORIGINS = CORS_ALLOWED_ORIGINS_ENV.split(",")
+    CORS_ALLOWED_ORIGINS = [o for o in re.split(r"[\s,]+", CORS_ALLOWED_ORIGINS_ENV) if o]
 else:
-    # Default for development and fallback
     CORS_ALLOWED_ORIGINS = [
-        "http://localhost:3000",  # Next.js default port
-        "http://127.0.0.1:3000",  # Alternative localhost
-        "http://localhost:3001",  # Next.js alternative port
-        "http://127.0.0.1:3001",  # Alternative localhost
-        "https://ekwunifescholarship.com",  # Production custom domain
-        "https://ekwunife-scholarship-foundation.vercel.app",  # Vercel domain
+        "https://ekwunifescholarship.com",
+        "https://www.ekwunifescholarship.com",
+        "https://ekwunife-scholarship-foundation.vercel.app",
     ]
-
-# For production debugging - temporarily allow all origins if environment variable not set
-if not CORS_ALLOWED_ORIGINS_ENV and not DEBUG:
-    CORS_ALLOW_ALL_ORIGINS = True
-else:
-    CORS_ALLOW_ALL_ORIGINS = False
-
-CORS_ALLOWS_CREDENTIALS = True
-
-# Additional CORS headers for frontend compatibility
+# Allow preview deployments (optional – regex based, no wildcard *)
+CORS_ALLOWED_ORIGIN_REGEXES = [
+    r"^https://.*-chibundu-ekwunifes-projects\.vercel\.app$",
+]
+CORS_ALLOW_CREDENTIALS = True  # corrected name (was CORS_ALLOWS_CREDENTIALS)
 CORS_ALLOW_HEADERS = [
     "accept",
     "accept-encoding",
@@ -225,12 +94,6 @@ CORS_ALLOW_HEADERS = [
     "x-csrftoken",
     "x-requested-with",
 ]
-
-CORS_ALLOW_METHODS = [
-    "DELETE",
-    "GET",
-    "OPTIONS",
-    "PATCH",
-    "POST",
-    "PUT",
-]
+CORS_ALLOW_METHODS = ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"]
+# Explicitly disable broad allow-all in production
+CORS_ALLOW_ALL_ORIGINS = False
