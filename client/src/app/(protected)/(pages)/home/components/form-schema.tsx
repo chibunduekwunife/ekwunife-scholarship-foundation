@@ -1,5 +1,7 @@
 import { z } from "zod"
 
+// Removed unused normalizePhone helper (inlined logic in superRefine)
+
 export const formSchema = z.object({
   // Step 1 - Personal Information (matches backend)
   full_name: z.string().min(2, {
@@ -15,19 +17,11 @@ export const formSchema = z.object({
       return isNaN(num) ? undefined : num;
     }
     return val;
-  }).refine((val) => {
-    if (val === undefined) return false;
-    return val >= 15;
-  }, { message: "Age is required and must be at least 15 years old" }),
+  }).refine((val) => val !== undefined && val >= 15, { message: "Age is required and must be at least 15 years old" }),
   gender: z.string().min(1, { message: "Gender is required" }),
   village: z.string().min(1, { message: "Village is required" }),
-  phone_number: z
-    .string()
-    .min(10, { message: "Phone number must be at least 10 digits." })
-    .max(15, { message: "Phone number must be at most 15 digits." })
-    .regex(/^(\+234|0)[0-9]{10}$/, {
-      message: "Enter a valid Nigerian phone number.",
-    }),
+  phone_country: z.enum(['NG','US','CA']).default('NG'),
+  phone_number: z.string(), // normalize later
   residential_address: z.string().min(1, { message: "Address is required." }),
   
   // Step 2 - Educational Information (matches backend)
@@ -47,10 +41,10 @@ export const formSchema = z.object({
   // Step 3 - Essay and Referral (matches backend)
   essay: z
     .string()
-    .refine((val) => val.trim().split(/\s+/).filter(Boolean).length >= 100, {
+    .refine((v)=> v.trim().split(/\s+/).filter(Boolean).length >= 100, {
       message: "Essay must be at least 100 words.",
     })
-    .refine((val) => val.trim().split(/\s+/).filter(Boolean).length <= 500, {
+    .refine((v)=> v.trim().split(/\s+/).filter(Boolean).length <= 500, {
       message: "Essay must not exceed 500 words.",
     }),
   referral_source: z.string().min(1, { message: "Referral source is required" }),
@@ -59,6 +53,27 @@ export const formSchema = z.object({
   // Application metadata
   scholarship: z.number().optional(), // Will be set based on scholarship type
   status: z.string().default("draft"), // draft, pending, approved, rejected
+}).superRefine((data, ctx) => {
+  const country = data.phone_country;
+  const original = data.phone_number || "";
+  const digits = original.replace(/\D/g, "");
+  let normalized = original;
+  if (country === 'NG') {
+    if (digits.startsWith('234')) normalized = '+234' + digits.slice(3, 13);
+    else if (digits.startsWith('0')) normalized = '+234' + digits.slice(1, 11);
+    else if (digits.length === 10) normalized = '+234' + digits;
+  } else if (country === 'US' || country === 'CA') {
+    if (digits.startsWith('1')) normalized = '+1' + digits.slice(1, 11);
+    else if (digits.length === 10) normalized = '+1' + digits;
+  }
+  data.phone_number = normalized;
+  if (!/^\+(234|1)\d{10}$/.test(data.phone_number)) {
+    ctx.addIssue({
+      path: ['phone_number'],
+      code: z.ZodIssueCode.custom,
+      message: 'Enter a valid phone number.'
+    });
+  }
 });
 
 // Type for form data
@@ -70,6 +85,7 @@ export const draftSchema = z.object({
   age: z.union([z.string(), z.number()]).optional(),
   gender: z.string().optional(),
   village: z.string().optional(),
+  phone_country: z.enum(['NG','US','CA']).optional(),
   phone_number: z.string().optional(),
   residential_address: z.string().optional(),
   scholarship_type: z.string().optional(),
