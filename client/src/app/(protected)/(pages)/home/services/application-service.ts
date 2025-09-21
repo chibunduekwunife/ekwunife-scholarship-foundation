@@ -60,6 +60,27 @@ export const getApplications = async (): Promise<Application[]> => {
   }
 };
 
+// Get a single application by ID
+export const getApplication = async (id: number): Promise<Application> => {
+  try {
+    console.log("Fetching application with ID:", id);
+    const response = await api.get(`/api/applications/${id}/`);
+    console.log("Application fetched successfully:", response.data);
+    return response.data;
+  } catch (error: unknown) {
+    console.error("Error fetching application:", error);
+    
+    if (error && typeof error === 'object' && 'response' in error) {
+      const axiosError = error as { response?: { status?: number; data?: unknown } };
+      console.error("Error response:", axiosError.response);
+      console.error("Error status:", axiosError.response?.status);
+      console.error("Error data:", axiosError.response?.data);
+    }
+    
+    throw error;
+  }
+};
+
 // Create a new application
 export const createApplication = async (data: ApplicationFormData): Promise<Application> => {
   try {
@@ -122,28 +143,60 @@ export const createApplication = async (data: ApplicationFormData): Promise<Appl
 // Update an existing application
 export const updateApplication = async (id: number, data: Partial<ApplicationFormData>): Promise<Application> => {
   try {
+    console.log("Updating application with ID:", id, "and data:", data);
+    
     const formData = new FormData();
     
+    // Add all fields to FormData
     Object.entries(data).forEach(([key, value]) => {
       if (key === 'transcript_documents' || key === 'passport_photo') {
         if (value instanceof File) {
+          console.log(`Adding file ${key}:`, value.name, value.size);
           formData.append(key, value);
+        } else {
+          console.log(`Skipping ${key}: not a file or undefined`);
         }
       } else if (key === 'grades') {
+        console.log(`Adding grades:`, value);
         formData.append(key, JSON.stringify(value));
+      } else if (key === 'scholarship') {
+        // Ensure scholarship is a valid number
+        const scholarshipId = value || 4; // Default to SSCE scholarship ID
+        console.log(`Adding scholarship:`, scholarshipId);
+        formData.append(key, String(scholarshipId));
       } else if (value !== undefined && value !== null) {
+        console.log(`Adding ${key}:`, value);
         formData.append(key, String(value));
       }
     });
+
+    // Log what we're sending
+    console.log("FormData entries for update:");
+    for (const [key, value] of formData.entries()) {
+      console.log(`${key}:`, value);
+    }
 
     const response = await api.patch(`/api/applications/${id}/`, formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
     });
+    
+    console.log("Application updated successfully:", response.data);
     return response.data;
-  } catch (error) {
+  } catch (error: unknown) {
     console.error("Error updating application:", error);
+    
+    if (error && typeof error === 'object' && 'response' in error) {
+      const axiosError = error as { response?: { status?: number; data?: unknown } };
+      console.error("Response status:", axiosError.response?.status);
+      console.error("Response data:", axiosError.response?.data);
+      
+      if (axiosError.response?.status === 400) {
+        console.error("Bad Request - likely validation error or missing required fields");
+      }
+    }
+    
     throw error;
   }
 };

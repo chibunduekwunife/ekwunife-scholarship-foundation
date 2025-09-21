@@ -201,13 +201,13 @@ export default function MultiStepForm({ scholarshipId = 1, existingApplication }
       if (existingApplication) {
         await updateApplication(existingApplication.id, values);
         toast.success("Application updated successfully!");
+        router.push(`/home/application/view/${existingApplication.id}`); // Redirect to view page after editing
       } else {
         await createApplication(values);
         toast.success("Application submitted successfully!");
         clearDraftFromStorage(); // Clear draft after successful submission
+        router.push("/home"); // Redirect to home page
       }
-      
-      router.push("/home"); // Redirect to home page
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Failed to submit application");
     } finally {
@@ -300,7 +300,10 @@ export default function MultiStepForm({ scholarshipId = 1, existingApplication }
                     disabled={isSubmitting}
                     className="w-40"
                   >
-                    {isSubmitting ? "Submitting..." : "Submit Application"}
+                    {isSubmitting 
+                      ? (existingApplication ? "Saving..." : "Submitting...") 
+                      : (existingApplication ? "Save Changes" : "Submit Application")
+                    }
                   </Button>
                 )}
               </div>
@@ -361,7 +364,10 @@ export default function MultiStepForm({ scholarshipId = 1, existingApplication }
                   disabled={isSubmitting}
                   className="w-full"
                 >
-                  {isSubmitting ? "Submitting..." : "Submit Application"}
+                  {isSubmitting 
+                    ? (existingApplication ? "Saving..." : "Submitting...") 
+                    : (existingApplication ? "Save Changes" : "Submit Application")
+                  }
                 </Button>
               )}
             </div>
