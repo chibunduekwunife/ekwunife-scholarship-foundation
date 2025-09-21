@@ -87,6 +87,12 @@ export default function EditApplicationPage() {
       {/* Edit Form */}
       <div>
         {(() => {
+          // Helper to derive phone country from stored phone number
+          const derivePhoneCountry = (phone: string): 'NG' | 'US' | 'CA' => {
+            if (phone.startsWith('+234')) return 'NG';
+            if (phone.startsWith('+1')) return 'US'; // Could be US or CA; default to US/CA distinction not stored
+            return 'NG';
+          };
           // Convert Application to ApplicationFormData format
           const applicationFormData: ApplicationFormData & { id: number } = {
             id: application.id,
@@ -94,6 +100,7 @@ export default function EditApplicationPage() {
             age: application.age,
             gender: application.gender,
             village: application.village,
+            phone_country: derivePhoneCountry(application.phone_number),
             phone_number: application.phone_number,
             residential_address: application.residential_address,
             scholarship_type: application.scholarship_type,
