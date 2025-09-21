@@ -136,55 +136,21 @@
   }
 }
 
-/* Custom Error Toast Styles */
+/* Custom Error Toast Styles - Simple and Clean */
 .error-toast {
-  animation: shake 0.5s ease-in-out;
-  position: relative;
-}
-
-.error-toast::before {
-  content: '';
-  position: absolute;
-  top: -2px;
-  left: -2px;
-  right: -2px;
-  bottom: -2px;
-  background: linear-gradient(45deg, #dc2626, #ef4444, #dc2626, #ef4444);
-  background-size: 400% 400%;
-  border-radius: 10px;
-  z-index: -1;
-  animation: gradient-shift 2s ease infinite;
-}
-
-@keyframes shake {
-  0%, 100% { transform: translateX(0); }
-  10%, 30%, 50%, 70%, 90% { transform: translateX(-3px); }
-  20%, 40%, 60%, 80% { transform: translateX(3px); }
-}
-
-@keyframes gradient-shift {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
-
-/* Error toast icon animation */
-.error-toast [data-icon] {
-  animation: pulse 1s ease-in-out infinite;
-}
-
-@keyframes pulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.1); }
-}
-
-/* Make error text more prominent */
-.error-toast [data-title] {
-  font-weight: 600 !important;
+  border: 1px solid #dc2626 !important;
+  background-color: #fef2f2 !important;
   color: #7f1d1d !important;
+  border-radius: 6px !important;
+  box-shadow: none !important;
+  max-width: 600px !important;
+  width: 90vw !important;
+  margin: 16px auto !important;
+  position: relative !important;
 }
 
-.error-toast [data-description] {
-  color: #991b1b !important;
-  line-height: 1.5 !important;
+/* Remove complex animations that might cause cutoff */
+.error-toast * {
+  color: #7f1d1d !important;
+  font-weight: normal !important;
 }

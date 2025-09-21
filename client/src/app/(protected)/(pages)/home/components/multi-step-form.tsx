@@ -163,35 +163,39 @@ export default function MultiStepForm({ scholarshipId = 1, existingApplication }
         toast.error(fullErrorMessage, {
           duration: 12000, // Show for 12 seconds
           style: {
-            maxWidth: '650px',
-            minWidth: '450px',
-            padding: '20px',
-            borderRadius: '12px',
-            border: '3px solid #dc2626',
+            maxWidth: '600px',
+            width: '90vw',
+            padding: '16px',
+            borderRadius: '6px',
+            border: '1px solid #dc2626',
             backgroundColor: '#fef2f2',
             color: '#7f1d1d',
             fontSize: '14px',
-            fontWeight: '500',
+            fontWeight: 'normal',
             whiteSpace: 'pre-line',
-            boxShadow: '0 20px 25px -5px rgba(220, 38, 38, 0.15), 0 10px 10px -5px rgba(220, 38, 38, 0.1)',
+            boxShadow: 'none',
             position: 'relative',
+            margin: '16px',
           },
-          className: 'error-toast',
-          icon: '❌',
+          position: 'top-center',
+          icon: '⚠️',
         });
       } else {
         toast.error("❌ VALIDATION ERROR\n\nPlease check all required fields and try again.", {
           style: {
-            border: '3px solid #dc2626',
+            border: '1px solid #dc2626',
             backgroundColor: '#fef2f2',
             color: '#7f1d1d',
-            fontWeight: '600',
+            fontWeight: 'normal',
             padding: '16px',
-            borderRadius: '12px',
+            borderRadius: '6px',
             whiteSpace: 'pre-line',
+            boxShadow: 'none',
+            width: '90vw',
+            maxWidth: '500px',
           },
+          position: 'top-center',
           icon: '⚠️',
-          className: 'error-toast',
         });
       }
       
