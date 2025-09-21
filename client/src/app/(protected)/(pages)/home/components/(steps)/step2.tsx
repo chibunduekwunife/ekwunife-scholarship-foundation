@@ -105,23 +105,32 @@ export default function Step2() {
           <FormItem>
             <FormLabel>Upload Transcript Documents</FormLabel>
             <FormControl>
-              <Input 
-                type="file" 
-                accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
-                className="cursor-pointer" 
-                onChange={(e) => {
-                  const file = e.target.files?.[0];
-                  onChange(file);
-                }}
-                // Exclude value prop for file inputs to avoid React warnings
-                {...field}
-              />
+              <div className="space-y-2">
+                <Input 
+                  type="file" 
+                  accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
+                  className="cursor-pointer" 
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    onChange(file);
+                  }}
+                  // Exclude value prop for file inputs to avoid React warnings
+                  {...field}
+                />
+                {value && (
+                  <div className="flex items-center gap-2 p-2 bg-green-50 border border-green-200 rounded-md">
+                    <div className="w-4 h-4 bg-green-500 rounded-full flex items-center justify-center">
+                      <svg className="w-2 h-2 text-white" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                      </svg>
+                    </div>
+                    <span className="text-sm text-green-700 font-medium">
+                      {value.name}
+                    </span>
+                  </div>
+                )}
+              </div>
             </FormControl>
-            {value && (
-              <p className="text-sm text-gray-600 mt-1">
-                Selected: {value.name}
-              </p>
-            )}
             <FormMessage />
           </FormItem>
         )}
@@ -133,23 +142,32 @@ export default function Step2() {
           <FormItem>
             <FormLabel>Upload Passport Photo</FormLabel>
             <FormControl>
-              <Input 
-                type="file" 
-                accept=".jpg,.jpeg,.png"
-                className="cursor-pointer" 
-                onChange={(e) => {
-                  const file = e.target.files?.[0];
-                  onChange(file);
-                }}
-                // Exclude value prop for file inputs to avoid React warnings
-                {...field}
-              />
+              <div className="space-y-2">
+                <Input 
+                  type="file" 
+                  accept=".jpg,.jpeg,.png"
+                  className="cursor-pointer" 
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    onChange(file);
+                  }}
+                  // Exclude value prop for file inputs to avoid React warnings
+                  {...field}
+                />
+                {value && (
+                  <div className="flex items-center gap-2 p-2 bg-green-50 border border-green-200 rounded-md">
+                    <div className="w-4 h-4 bg-green-500 rounded-full flex items-center justify-center">
+                      <svg className="w-2 h-2 text-white" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                      </svg>
+                    </div>
+                    <span className="text-sm text-green-700 font-medium">
+                      {value.name}
+                    </span>
+                  </div>
+                )}
+              </div>
             </FormControl>
-            {value && (
-              <p className="text-sm text-gray-600 mt-1">
-                Selected: {value.name}
-              </p>
-            )}
             <FormMessage />
           </FormItem>
         )}
