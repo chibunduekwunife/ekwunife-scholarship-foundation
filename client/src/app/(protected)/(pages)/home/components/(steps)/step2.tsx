@@ -163,12 +163,17 @@ export default function Step2() {
                   <input
                     type="file"
                     multiple
-                    accept=".jpg,.jpeg,.png,.webp"
+                    accept="image/jpeg,image/png,image/jpg,image/webp"
                     className="hidden"
                     onChange={(e) => {
                       const files = Array.from(e.target.files || []);
-                      if (files.length) {
-                        onChange([...(value || []), ...files]);
+                      const valid = files.filter(f => f.type.startsWith('image/'));
+                      const rejected = files.filter(f => !f.type.startsWith('image/'));
+                      if (rejected.length) {
+                        alert(`Some files were rejected (not images): ${rejected.map(r=> r.name).join(', ')}`);
+                      }
+                      if (valid.length) {
+                        onChange([...(value || []), ...valid]);
                       }
                       e.target.value = "";
                     }}
