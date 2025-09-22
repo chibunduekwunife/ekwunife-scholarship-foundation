@@ -137,7 +137,7 @@ export default function Step2() {
                           type="button"
                           onClick={() => {
                             const next = value.filter((_: File, i: number) => i !== idx);
-                            onChange(next.length ? next : undefined);
+                            onChange(next); // use empty array if last item removed
                           }}
                           className="text-destructive hover:underline"
                         >Remove</button>
@@ -195,7 +195,7 @@ export default function Step2() {
                           type="button"
                           onClick={() => {
                             const next = value.filter((_: File, i: number) => i !== idx);
-                            onChange(next.length ? next : undefined);
+                            onChange(next); // keep empty array for proper UI update
                           }}
                           className="text-destructive hover:underline"
                         >Remove</button>
