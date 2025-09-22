@@ -6,10 +6,10 @@ export default function Footer() {
     <div className="bg-primary text-white">
       <div className="flex flex-col md:flex-row gap-10 max-w-screen-xl mx-auto justify-between items-center py-15 px-[3%]">
         <div className="text-center md:text-start">
-          <span>&copy; Crown copyright 2025</span>
+          <span>&copy; Copyright 2025</span>
           <p>
-            Ekwunife Foundation scholarship are supported by the Foreign,
-            Nigeria and Office (FCDO) and partner organizations.
+            Ekwunife Foundation scholarship are supported by friends, family, 
+            and partner organizations.
           </p>
         </div>
         <div className="flex gap-5">
