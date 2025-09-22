@@ -220,20 +220,51 @@ export const deleteApplication = async (id: number): Promise<void> => {
 // Local storage keys for draft management
 const DRAFT_STORAGE_KEY = "scholarship_application_draft";
 
+// Persisted file metadata interface
+interface PersistedFileMeta { name: string; type: string; size: number; dataUrl: string | null }
+interface PersistedFilesWrapper { __files: PersistedFileMeta[] }
+
 // Save draft to local storage
-export const saveDraftToStorage = (data: Partial<ApplicationDraftData>): void => {
+export const saveDraftToStorage = async (data: Partial<ApplicationDraftData>): Promise<void> => {
   try {
-    // Convert File objects to base64 for storage
-    const storageData = { ...data };
-    if (data.transcript_documents instanceof File) {
-      // For now, we'll just store the file name, actual file handling would need more complex logic
-      storageData.transcript_documents = undefined;
+    const MAX_FILE_PERSIST = 2 * 1024 * 1024; // 2MB per file safeguard
+    const toPersist: Record<string, unknown> = { ...data } as Record<string, unknown>;
+
+    const fileArrayKeys: (keyof Partial<ApplicationDraftData>)[] = ['transcript_documents', 'passport_photo'];
+
+    const fileToDataURL = (file: File): Promise<string | null> => new Promise((resolve) => {
+      if (file.size > MAX_FILE_PERSIST) return resolve(null); // skip large files
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = () => resolve(null);
+      reader.readAsDataURL(file);
+    });
+
+    for (const key of fileArrayKeys) {
+      const value = (data as Record<string, unknown>)[key];
+      if (Array.isArray(value)) {
+        const serialized: PersistedFileMeta[] = [];
+        for (const f of value) {
+          if (f instanceof File) {
+            const dataUrl = await fileToDataURL(f);
+            serialized.push({ name: f.name, type: f.type, size: f.size, dataUrl });
+          }
+        }
+        if (serialized.length > 0) {
+          toPersist[key] = { __files: serialized };
+        } else {
+          delete toPersist[key];
+        }
+      } else if (value instanceof File) {
+        // legacy single file case (should not happen now)
+        const dataUrl = await fileToDataURL(value);
+        toPersist[key] = { __files: [{ name: value.name, type: value.type, size: value.size, dataUrl }] };
+      } else {
+        delete toPersist[key];
+      }
     }
-    if (data.passport_photo instanceof File) {
-      storageData.passport_photo = undefined;
-    }
-    
-    localStorage.setItem(DRAFT_STORAGE_KEY, JSON.stringify(storageData));
+
+    localStorage.setItem(DRAFT_STORAGE_KEY, JSON.stringify(toPersist));
   } catch (error) {
     console.error("Error saving draft:", error);
   }
@@ -243,7 +274,38 @@ export const saveDraftToStorage = (data: Partial<ApplicationDraftData>): void =>
 export const loadDraftFromStorage = (): Partial<ApplicationDraftData> | null => {
   try {
     const stored = localStorage.getItem(DRAFT_STORAGE_KEY);
-    return stored ? JSON.parse(stored) : null;
+    if (!stored) return null;
+    const parsed = JSON.parse(stored);
+
+    const reconstruct = (entry: unknown): File[] => {
+      if (!entry || typeof entry !== 'object' || !('__files' in entry)) return [];
+      const filesMeta = (entry as PersistedFilesWrapper).__files || [];
+      const files: File[] = [];
+      for (const meta of filesMeta) {
+        if (!meta || !meta.dataUrl) continue;
+        try {
+          const dataUrl: string = meta.dataUrl;
+          const commaIdx = dataUrl.indexOf(',');
+          const base64 = dataUrl.substring(commaIdx + 1);
+          const byteChars = atob(base64);
+          const byteNumbers = new Array(byteChars.length);
+          for (let i = 0; i < byteChars.length; i++) byteNumbers[i] = byteChars.charCodeAt(i);
+          const blob = new Blob([new Uint8Array(byteNumbers)], { type: meta.type || 'application/octet-stream' });
+          const file = new File([blob], meta.name || 'file', { type: meta.type || 'application/octet-stream' });
+          Object.defineProperty(file, 'lastModified', { value: Date.now() });
+          files.push(file);
+        } catch (e) {
+          console.warn('Failed to reconstruct file', e);
+        }
+      }
+      return files;
+    };
+
+    const draft: Record<string, unknown> = { ...parsed };
+    if (parsed.transcript_documents) draft.transcript_documents = reconstruct(parsed.transcript_documents);
+    if (parsed.passport_photo) draft.passport_photo = reconstruct(parsed.passport_photo);
+
+    return draft;
   } catch (error) {
     console.error("Error loading draft:", error);
     return null;
