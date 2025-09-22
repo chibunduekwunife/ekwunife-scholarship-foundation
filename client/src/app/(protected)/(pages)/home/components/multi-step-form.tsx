@@ -46,6 +46,7 @@ export default function MultiStepForm({ scholarshipId = 1, existingApplication }
       age: "",
       gender: "",
       village: "",
+      phone_country: 'NG',
       phone_number: "",
       residential_address: "",
       scholarship_type: "",
@@ -208,8 +209,29 @@ export default function MultiStepForm({ scholarshipId = 1, existingApplication }
         clearDraftFromStorage(); // Clear draft after successful submission
         router.push("/home"); // Redirect to home page
       }
-    } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Failed to submit application");
+    } catch (error: unknown) {
+      interface MaybeAxiosError { response?: { data?: unknown } }
+      const axiosErr: MaybeAxiosError | null = (error && typeof error === 'object' && 'response' in error) ? (error as MaybeAxiosError) : null;
+      if (axiosErr?.response?.data) {
+        const data = axiosErr.response.data;
+        if (data && typeof data === 'object' && !Array.isArray(data)) {
+          const messages: string[] = [];
+          Object.entries(data as Record<string, unknown>).forEach(([field, val]) => {
+            if (Array.isArray(val)) messages.push(`${field}: ${val.join(' ')}`);
+            else if (typeof val === 'string') messages.push(`${field}: ${val}`);
+            else messages.push(`${field}: ${JSON.stringify(val)}`);
+          });
+          if (messages.length) {
+            messages.slice(0,6).forEach(m=> toast.error(m));
+          } else {
+            toast.error('Submission failed (validation error).');
+          }
+        } else {
+          toast.error('Submission failed.');
+        }
+      } else {
+        toast.error(error instanceof Error ? error.message : 'Failed to submit application');
+      }
     } finally {
       setIsSubmitting(false);
     }
