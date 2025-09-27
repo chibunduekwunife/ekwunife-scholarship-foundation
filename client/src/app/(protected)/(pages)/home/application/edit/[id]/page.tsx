@@ -107,8 +107,12 @@ export default function EditApplicationPage() {
             school: application.school,
             graduation_year: application.graduation_year,
             grades: Array.isArray(application.grades) ? application.grades : [],
-            transcript_documents: undefined, // Files need special handling
-            passport_photo: undefined, // Files need special handling
+            transcript_documents: [],
+            passport_photo: [],
+            existing_transcript_files: (application.transcript_files || []).map((f) => ({ id: f.id, url: f.file, name: f.file.split('/').pop(), size: undefined })),
+            existing_passport_photos: (application.passport_photos || []).map((p) => ({ id: p.id, url: p.image, name: p.image.split('/').pop(), size: undefined })),
+            delete_transcript_ids: [],
+            delete_passport_photo_ids: [],
             essay: application.essay,
             referral_source: application.referral_source,
             referral_source_confirmed: application.referral_source_confirmed,

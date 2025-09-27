@@ -24,7 +24,7 @@ interface Scholarship {
 }
 
 export default function Step2() {
-  const { control } = useFormContext();
+  const { control, setValue, watch } = useFormContext();
   const [scholarships, setScholarships] = useState<Scholarship[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -106,6 +106,7 @@ export default function Step2() {
             <FormLabel>Upload Transcript Documents</FormLabel>
             <FormControl>
               <div className="space-y-3">
+                {/* uploader */}
                 <label className="flex flex-col items-center justify-center w-full border-2 border-dashed rounded-md p-6 text-center hover:border-primary/70 transition cursor-pointer bg-muted/30">
                   <input
                     type="file"
@@ -125,6 +126,17 @@ export default function Step2() {
                   <span className="text-xs text-muted-foreground mt-1">or drag & drop files here</span>
                   <span className="text-[11px] text-muted-foreground mt-2">PDF, DOC, Images</span>
                 </label>
+                {/* existing items from server */}
+                <ExistingFilesList
+                  items={watch('existing_transcript_files') || []}
+                  onRemove={(id) => {
+                    const current = (watch('existing_transcript_files') || []) as { id: number; url: string; name?: string }[];
+                    setValue('existing_transcript_files', current.filter((i)=> i.id !== id));
+                    const del = (watch('delete_transcript_ids') || []) as number[];
+                    setValue('delete_transcript_ids', [...del, id]);
+                  }}
+                />
+                {/* newly selected files list */}
                 {Array.isArray(value) && value.length > 0 && (
                   <ul className="space-y-2">
                     {value.map((f: File, idx: number) => (
@@ -133,14 +145,7 @@ export default function Step2() {
                           <span className="font-medium truncate">{f.name}</span>
                           <span className="text-[10px] text-muted-foreground">{(f.size/1024).toFixed(1)} KB</span>
                         </div>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            const next = value.filter((_: File, i: number) => i !== idx);
-                            onChange(next); // use empty array if last item removed
-                          }}
-                          className="text-destructive hover:underline"
-                        >Remove</button>
+                        <button type="button" onClick={() => { const next = value.filter((_: File, i: number) => i !== idx); onChange(next); }} className="text-destructive hover:underline">Remove</button>
                       </li>
                     ))}
                   </ul>
@@ -159,6 +164,7 @@ export default function Step2() {
             <FormLabel>Upload Passport Photos</FormLabel>
             <FormControl>
               <div className="space-y-3">
+                {/* uploader */}
                 <label className="flex flex-col items-center justify-center w-full border-2 border-dashed rounded-md p-6 text-center hover:border-primary/70 transition cursor-pointer bg-muted/30">
                   <input
                     type="file"
@@ -183,6 +189,17 @@ export default function Step2() {
                   <span className="text-xs text-muted-foreground mt-1">or drag & drop images</span>
                   <span className="text-[11px] text-muted-foreground mt-2">JPG, PNG, WEBP</span>
                 </label>
+                {/* existing images from server */}
+                <ExistingFilesList
+                  items={watch('existing_passport_photos') || []}
+                  onRemove={(id) => {
+                    const current = (watch('existing_passport_photos') || []) as { id: number; url: string; name?: string }[];
+                    setValue('existing_passport_photos', current.filter((i)=> i.id !== id));
+                    const del = (watch('delete_passport_photo_ids') || []) as number[];
+                    setValue('delete_passport_photo_ids', [...del, id]);
+                  }}
+                />
+                {/* newly selected files list */}
                 {Array.isArray(value) && value.length > 0 && (
                   <ul className="space-y-2">
                     {value.map((f: File, idx: number) => (
@@ -191,14 +208,7 @@ export default function Step2() {
                           <span className="font-medium truncate">{f.name}</span>
                           <span className="text-[10px] text-muted-foreground">{(f.size/1024).toFixed(1)} KB</span>
                         </div>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            const next = value.filter((_: File, i: number) => i !== idx);
-                            onChange(next); // keep empty array for proper UI update
-                          }}
-                          className="text-destructive hover:underline"
-                        >Remove</button>
+                        <button type="button" onClick={() => { const next = value.filter((_: File, i: number) => i !== idx); onChange(next); }} className="text-destructive hover:underline">Remove</button>
                       </li>
                     ))}
                   </ul>
@@ -210,5 +220,20 @@ export default function Step2() {
         )}
       />
     </div>
+  );
+}
+
+// Helper component for existing files
+function ExistingFilesList({ items, onRemove }: { items: { id: number; url: string; name?: string }[]; onRemove: (id: number)=> void }) {
+  if (!items?.length) return null;
+  return (
+    <ul className="space-y-2">
+      {items.map((item) => (
+        <li key={item.id} className="flex items-center justify-between gap-3 rounded-md border bg-white/50 dark:bg-muted px-3 py-2 text-xs">
+          <a href={item.url} target="_blank" rel="noreferrer" className="truncate underline text-blue-600">{item.name || item.url.split('/').pop()}</a>
+          <button type="button" onClick={() => onRemove(item.id)} className="text-destructive hover:underline">Remove</button>
+        </li>
+      ))}
+    </ul>
   );
 }

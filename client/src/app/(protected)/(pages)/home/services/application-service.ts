@@ -25,6 +25,8 @@ export interface Application {
   referral_source_confirmed: boolean;
   submitted_at: string;
   status: string;
+  transcript_files?: { id: number; file: string }[];
+  passport_photos?: { id: number; image: string }[];
 }
 
 // Get all applications for the current user
@@ -165,6 +167,12 @@ export const updateApplication = async (id: number, data: Partial<ApplicationFor
       } else if (key === 'grades') {
         console.log(`Adding grades:`, value);
         formData.append(key, JSON.stringify(value));
+      } else if (key === 'delete_transcript_ids' || key === 'delete_passport_photo_ids') {
+        if (Array.isArray(value)) {
+          value.forEach((id) => formData.append(key, String(id)));
+        }
+      } else if (key === 'existing_transcript_files' || key === 'existing_passport_photos') {
+        // ignore on transport (read-only), but keep in values for UI
       } else if (key === 'scholarship') {
         // Ensure scholarship is a valid number
         const scholarshipId = value || 4; // Default to SSCE scholarship ID

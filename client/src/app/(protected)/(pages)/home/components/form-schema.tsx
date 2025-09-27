@@ -38,6 +38,12 @@ export const formSchema = z.object({
   transcript_documents: z.array(z.instanceof(File)).optional(),
   passport_photo: z.array(z.instanceof(File)).optional(),
   
+  // Existing server-side files for edit mode (read-only in UI, but we manage deletion lists)
+  existing_transcript_files: z.array(z.object({ id: z.number(), url: z.string(), name: z.string().optional(), size: z.number().optional() })).optional().default([]),
+  existing_passport_photos: z.array(z.object({ id: z.number(), url: z.string(), name: z.string().optional(), size: z.number().optional() })).optional().default([]),
+  delete_transcript_ids: z.array(z.number()).optional().default([]),
+  delete_passport_photo_ids: z.array(z.number()).optional().default([]),
+  
   // Step 3 - Essay and Referral (matches backend)
   essay: z
     .string()
@@ -94,6 +100,10 @@ export const draftSchema = z.object({
   grades: z.array(z.string()).default([]),
   transcript_documents: z.array(z.instanceof(File)).optional(),
   passport_photo: z.array(z.instanceof(File)).optional(),
+  existing_transcript_files: z.array(z.object({ id: z.number(), url: z.string(), name: z.string().optional(), size: z.number().optional() })).optional().default([]),
+  existing_passport_photos: z.array(z.object({ id: z.number(), url: z.string(), name: z.string().optional(), size: z.number().optional() })).optional().default([]),
+  delete_transcript_ids: z.array(z.number()).optional().default([]),
+  delete_passport_photo_ids: z.array(z.number()).optional().default([]),
   essay: z.string().optional(),
   referral_source: z.string().optional(),
   referral_source_confirmed: z.boolean().default(false),

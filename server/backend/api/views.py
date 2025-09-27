@@ -121,6 +121,17 @@ class ApplicationDetail(generics.RetrieveUpdateAPIView):
                 
             serializer.save(scholarship=scholarship)
             app_instance = serializer.instance
+
+            # Deletions if requested
+            delete_transcript_ids = self.request.data.getlist('delete_transcript_ids')
+            delete_passport_ids = self.request.data.getlist('delete_passport_photo_ids')
+            if delete_transcript_ids:
+                from .models import ApplicationTranscript
+                ApplicationTranscript.objects.filter(application=app_instance, id__in=delete_transcript_ids).delete()
+            if delete_passport_ids:
+                from .models import ApplicationPassportPhoto
+                ApplicationPassportPhoto.objects.filter(application=app_instance, id__in=delete_passport_ids).delete()
+
             # Add new files if provided
             for f in self.request.FILES.getlist('transcript_documents'):
                 from .models import ApplicationTranscript
