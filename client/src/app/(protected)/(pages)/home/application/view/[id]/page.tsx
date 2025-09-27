@@ -196,38 +196,99 @@ export default function ViewApplicationPage() {
           
           {/* Documents */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t">
-            {application.transcript_documents && (
-              <div>
-                <label className="text-sm font-medium text-gray-600">Transcript Documents</label>
-                <div className="flex items-center gap-2 mt-1 p-2 bg-blue-50 border border-blue-200 rounded-md">
-                  <FileText className="h-4 w-4 text-blue-600" />
-                  <span className="text-sm text-blue-700">Document uploaded</span>
-                  <Button 
-                    size="sm" 
-                    variant="outline"
-                    onClick={() => window.open(application.transcript_documents, '_blank')}
-                  >
-                    View
-                  </Button>
-                </div>
-              </div>
-            )}
-            {application.passport_photo && (
-              <div>
-                <label className="text-sm font-medium text-gray-600">Passport Photo</label>
-                <div className="flex items-center gap-2 mt-1 p-2 bg-blue-50 border border-blue-200 rounded-md">
-                  <FileText className="h-4 w-4 text-blue-600" />
-                  <span className="text-sm text-blue-700">Photo uploaded</span>
-                  <Button 
-                    size="sm" 
-                    variant="outline"
-                    onClick={() => window.open(application.passport_photo, '_blank')}
-                  >
-                    View
-                  </Button>
-                </div>
-              </div>
-            )}
+            {/* Transcript documents list */}
+            <div>
+              <label className="text-sm font-medium text-gray-600">Transcript Documents</label>
+              {application.transcript_files && application.transcript_files.length > 0 ? (
+                <ul className="mt-2 space-y-2">
+                  {application.transcript_files.map((f) => {
+                    const name = f.file?.split('/').pop() || 'document';
+                    return (
+                      <li key={f.id} className="flex items-center justify-between gap-3 p-2 bg-blue-50 border border-blue-200 rounded-md">
+                        <div className="flex items-center gap-2 min-w-0">
+                          <FileText className="h-4 w-4 text-blue-600" />
+                          <span className="text-sm text-blue-700 truncate" title={name}>{name}</span>
+                        </div>
+                        <Button 
+                          size="sm" 
+                          variant="outline"
+                          onClick={() => window.open(f.file, '_blank')}
+                        >
+                          View
+                        </Button>
+                      </li>
+                    );
+                  })}
+                </ul>
+              ) : application.transcript_documents ? (
+                <ul className="mt-2 space-y-2">
+                  <li className="flex items-center justify-between gap-3 p-2 bg-blue-50 border border-blue-200 rounded-md">
+                    <div className="flex items-center gap-2 min-w-0">
+                      <FileText className="h-4 w-4 text-blue-600" />
+                      <span className="text-sm text-blue-700 truncate" title={application.transcript_documents}>
+                        {application.transcript_documents.split('/').pop()}
+                      </span>
+                    </div>
+                    <Button 
+                      size="sm" 
+                      variant="outline"
+                      onClick={() => window.open(application.transcript_documents!, '_blank')}
+                    >
+                      View
+                    </Button>
+                  </li>
+                </ul>
+              ) : (
+                <p className="text-sm text-gray-500 mt-1">No transcripts uploaded</p>
+              )}
+            </div>
+
+            {/* Passport photos list */}
+            <div>
+              <label className="text-sm font-medium text-gray-600">Passport Photos</label>
+              {application.passport_photos && application.passport_photos.length > 0 ? (
+                <ul className="mt-2 space-y-2">
+                  {application.passport_photos.map((p) => {
+                    const name = p.image?.split('/').pop() || 'photo';
+                    return (
+                      <li key={p.id} className="flex items-center justify-between gap-3 p-2 bg-blue-50 border border-blue-200 rounded-md">
+                        <div className="flex items-center gap-2 min-w-0">
+                          <FileText className="h-4 w-4 text-blue-600" />
+                          <span className="text-sm text-blue-700 truncate" title={name}>{name}</span>
+                        </div>
+                        <Button 
+                          size="sm" 
+                          variant="outline"
+                          onClick={() => window.open(p.image, '_blank')}
+                        >
+                          View
+                        </Button>
+                      </li>
+                    );
+                  })}
+                </ul>
+              ) : application.passport_photo ? (
+                <ul className="mt-2 space-y-2">
+                  <li className="flex items-center justify-between gap-3 p-2 bg-blue-50 border border-blue-200 rounded-md">
+                    <div className="flex items-center gap-2 min-w-0">
+                      <FileText className="h-4 w-4 text-blue-600" />
+                      <span className="text-sm text-blue-700 truncate" title={application.passport_photo}>
+                        {application.passport_photo.split('/').pop()}
+                      </span>
+                    </div>
+                    <Button 
+                      size="sm" 
+                      variant="outline"
+                      onClick={() => window.open(application.passport_photo!, '_blank')}
+                    >
+                      View
+                    </Button>
+                  </li>
+                </ul>
+              ) : (
+                <p className="text-sm text-gray-500 mt-1">No passport photos uploaded</p>
+              )}
+            </div>
           </div>
         </CardContent>
       </Card>
