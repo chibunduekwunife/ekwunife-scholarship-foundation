@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 
 import { useEffect, useState } from "react";
@@ -5,6 +6,7 @@ import { useParams, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { ArrowLeft, Edit, FileText, User, GraduationCap, PenTool } from "lucide-react";
 import { getApplication, type Application } from "../../../services/application-service";
 import { toast } from "sonner";
@@ -22,12 +24,31 @@ function dlPassport(appId: number, fileId?: number) {
     ? `${apiBase()}/api/applications/${appId}/passports/${fileId}/download/`
     : `${apiBase()}/api/applications/${appId}/passport/download/`;
 }
+function withBase(url: string) {
+  if (!url) return url;
+  if (/^https?:\/\//i.test(url)) return url;
+  return `${apiBase()}/${url.replace(/^\//, '')}`;
+}
+const isImg = (name: string) => /\.(png|jpe?g|webp|gif|bmp|svg)$/i.test(name);
+const isPdf = (name: string) => /\.pdf$/i.test(name);
+const baseName = (p: string) => (p?.split('/').pop() || 'file');
 
 export default function ViewApplicationPage() {
   const params = useParams();
   const router = useRouter();
   const [application, setApplication] = useState<Application | null>(null);
   const [loading, setLoading] = useState(true);
+
+  // viewer state
+  const [viewerOpen, setViewerOpen] = useState(false);
+  const [viewer, setViewer] = useState<{ title: string; url: string; downloadUrl?: string; kind: 'image' | 'pdf' | 'other' } | null>(null);
+
+  const openViewer = (title: string, url: string, downloadUrl?: string) => {
+    const name = title.toLowerCase();
+    const kind: 'image'|'pdf'|'other' = isImg(name) ? 'image' : isPdf(name) ? 'pdf' : 'other';
+    setViewer({ title, url, downloadUrl, kind });
+    setViewerOpen(true);
+  };
 
   useEffect(() => {
     const fetchApplication = async () => {
@@ -213,43 +234,32 @@ export default function ViewApplicationPage() {
             {/* Result/Certificate documents list */}
             <div>
               <label className="text-sm font-medium text-gray-600">Result/Certificate Documents</label>
-              {application.transcript_files && application.transcript_files.length > 0 ? (
+              {application?.transcript_files && application.transcript_files.length > 0 ? (
                 <ul className="mt-2 space-y-2">
                   {application.transcript_files.map((f) => {
-                    const name = f.file?.split('/').pop() || 'document';
+                    const name = baseName(f.file);
+                    const url = withBase(f.file);
                     return (
                       <li key={f.id} className="flex items-center justify-between gap-3 p-2 bg-blue-50 border border-blue-200 rounded-md">
                         <div className="flex items-center gap-2 min-w-0">
                           <FileText className="h-4 w-4 text-blue-600" />
                           <span className="text-sm text-blue-700 truncate" title={name}>{name}</span>
                         </div>
-                        <Button 
-                          size="sm" 
-                          variant="outline"
-                          onClick={() => window.open(dlTranscript(application.id, f.id), '_blank')}
-                        >
-                          Download
-                        </Button>
+                        <Button size="sm" variant="outline" onClick={() => openViewer(name, url, dlTranscript(application.id, f.id))}>View</Button>
                       </li>
                     );
                   })}
                 </ul>
-              ) : application.transcript_documents ? (
+              ) : application?.transcript_documents ? (
                 <ul className="mt-2 space-y-2">
                   <li className="flex items-center justify-between gap-3 p-2 bg-blue-50 border border-blue-200 rounded-md">
                     <div className="flex items-center gap-2 min-w-0">
                       <FileText className="h-4 w-4 text-blue-600" />
                       <span className="text-sm text-blue-700 truncate" title={application.transcript_documents}>
-                        {application.transcript_documents.split('/').pop()}
+                        {baseName(application.transcript_documents)}
                       </span>
                     </div>
-                    <Button 
-                      size="sm" 
-                      variant="outline"
-                      onClick={() => window.open(dlTranscript(application.id), '_blank')}
-                    >
-                      Download
-                    </Button>
+                    <Button size="sm" variant="outline" onClick={() => openViewer(baseName(application.transcript_documents!), withBase(application.transcript_documents!), dlTranscript(application.id))}>View</Button>
                   </li>
                 </ul>
               ) : (
@@ -260,43 +270,32 @@ export default function ViewApplicationPage() {
             {/* Passport photos list */}
             <div>
               <label className="text-sm font-medium text-gray-600">Passport Photos</label>
-              {application.passport_photos && application.passport_photos.length > 0 ? (
+              {application?.passport_photos && application.passport_photos.length > 0 ? (
                 <ul className="mt-2 space-y-2">
                   {application.passport_photos.map((p) => {
-                    const name = p.image?.split('/').pop() || 'photo';
+                    const name = baseName(p.image);
+                    const url = withBase(p.image);
                     return (
                       <li key={p.id} className="flex items-center justify-between gap-3 p-2 bg-blue-50 border border-blue-200 rounded-md">
                         <div className="flex items-center gap-2 min-w-0">
                           <FileText className="h-4 w-4 text-blue-600" />
                           <span className="text-sm text-blue-700 truncate" title={name}>{name}</span>
                         </div>
-                        <Button 
-                          size="sm" 
-                          variant="outline"
-                          onClick={() => window.open(dlPassport(application.id, p.id), '_blank')}
-                        >
-                          Download
-                        </Button>
+                        <Button size="sm" variant="outline" onClick={() => openViewer(name, url, dlPassport(application.id, p.id))}>View</Button>
                       </li>
                     );
                   })}
                 </ul>
-              ) : application.passport_photo ? (
+              ) : application?.passport_photo ? (
                 <ul className="mt-2 space-y-2">
                   <li className="flex items-center justify-between gap-3 p-2 bg-blue-50 border border-blue-200 rounded-md">
                     <div className="flex items-center gap-2 min-w-0">
                       <FileText className="h-4 w-4 text-blue-600" />
                       <span className="text-sm text-blue-700 truncate" title={application.passport_photo}>
-                        {application.passport_photo.split('/').pop()}
+                        {baseName(application.passport_photo)}
                       </span>
                     </div>
-                    <Button 
-                      size="sm" 
-                      variant="outline"
-                      onClick={() => window.open(dlPassport(application.id), '_blank')}
-                    >
-                      Download
-                    </Button>
+                    <Button size="sm" variant="outline" onClick={() => openViewer(baseName(application.passport_photo!), withBase(application.passport_photo!), dlPassport(application.id))}>View</Button>
                   </li>
                 </ul>
               ) : (
@@ -343,6 +342,39 @@ export default function ViewApplicationPage() {
           </CardContent>
         </Card>
       )}
+
+      {/* File Viewer Modal */}
+      <Dialog open={viewerOpen} onOpenChange={setViewerOpen}>
+        <DialogContent className="max-w-[95vw] md:max-w-4xl">
+          <DialogHeader>
+            <DialogTitle className="truncate">{viewer?.title || 'Preview'}</DialogTitle>
+          </DialogHeader>
+          <div className="mt-2">
+            {viewer?.kind === 'image' && (
+              <div className="w-full flex items-center justify-center">
+                <img src={viewer.url} alt={viewer.title} className="max-h-[80vh] w-auto rounded border" />
+              </div>
+            )}
+            {viewer?.kind === 'pdf' && (
+              <iframe src={viewer.url} className="w-[90vw] md:w-full h-[80vh] border rounded" />
+            )}
+            {viewer?.kind === 'other' && (
+              <div className="p-4 text-sm text-gray-700">
+                <p>Preview not available for this file type.</p>
+                {viewer.downloadUrl && (
+                  <p className="mt-2">You can download it instead.</p>
+                )}
+              </div>
+            )}
+          </div>
+          <DialogFooter className="gap-2">
+            {viewer?.kind === 'other' && viewer?.downloadUrl && (
+              <Button variant="outline" onClick={() => window.open(viewer.downloadUrl!, '_blank')}>Download</Button>
+            )}
+            <Button onClick={() => setViewerOpen(false)}>Close</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
