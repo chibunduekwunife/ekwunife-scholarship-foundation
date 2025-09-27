@@ -9,6 +9,9 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from datetime import date, timedelta
 from django.shortcuts import get_object_or_404
+from django.http import FileResponse, Http404
+import os
+import re
 
 # Create New Application
 class ApplicationListCreate(generics.ListCreateAPIView):
@@ -139,3 +142,61 @@ class ApplicationDetail(generics.RetrieveUpdateAPIView):
             for img in self.request.FILES.getlist('passport_photo'):
                 from .models import ApplicationPassportPhoto
                 ApplicationPassportPhoto.objects.create(application=app_instance, image=img)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def download_transcript(request, pk: int, file_id: int):
+    app = get_object_or_404(Application, id=pk, applicant=request.user)
+    from .models import ApplicationTranscript
+    obj = get_object_or_404(ApplicationTranscript, id=file_id, application=app)
+    f = obj.file
+    if not f or not os.path.exists(f.path):
+        raise Http404
+    base = os.path.basename(f.name)
+    name, ext = os.path.splitext(base)
+    safe_full = re.sub(r'[^A-Za-z0-9_-]+', '_', app.full_name)
+    filename = f"{name}_{safe_full}{ext}"
+    response = FileResponse(open(f.path, 'rb'), as_attachment=True, filename=filename)
+    return response
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def download_passport(request, pk: int, file_id: int):
+    app = get_object_or_404(Application, id=pk, applicant=request.user)
+    from .models import ApplicationPassportPhoto
+    obj = get_object_or_404(ApplicationPassportPhoto, id=file_id, application=app)
+    f = obj.image
+    if not f or not os.path.exists(f.path):
+        raise Http404
+    base = os.path.basename(f.name)
+    name, ext = os.path.splitext(base)
+    safe_full = re.sub(r'[^A-Za-z0-9_-]+', '_', app.full_name)
+    filename = f"{name}_{safe_full}{ext}"
+    response = FileResponse(open(f.path, 'rb'), as_attachment=True, filename=filename)
+    return response
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def download_legacy_transcript(request, pk: int):
+    app = get_object_or_404(Application, id=pk, applicant=request.user)
+    f = app.transcript_documents
+    if not f or not hasattr(f, 'path') or not os.path.exists(f.path):
+        raise Http404
+    base = os.path.basename(f.name)
+    name, ext = os.path.splitext(base)
+    safe_full = re.sub(r'[^A-Za-z0-9_-]+', '_', app.full_name)
+    filename = f"{name}_{safe_full}{ext}"
+    return FileResponse(open(f.path, 'rb'), as_attachment=True, filename=filename)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def download_legacy_passport(request, pk: int):
+    app = get_object_or_404(Application, id=pk, applicant=request.user)
+    f = app.passport_photo
+    if not f or not hasattr(f, 'path') or not os.path.exists(f.path):
+        raise Http404
+    base = os.path.basename(f.name)
+    name, ext = os.path.splitext(base)
+    safe_full = re.sub(r'[^A-Za-z0-9_-]+', '_', app.full_name)
+    filename = f"{name}_{safe_full}{ext}"
+    return FileResponse(open(f.path, 'rb'), as_attachment=True, filename=filename)

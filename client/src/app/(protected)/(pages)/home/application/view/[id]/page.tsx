@@ -9,11 +9,18 @@ import { ArrowLeft, Edit, FileText, User, GraduationCap, PenTool } from "lucide-
 import { getApplication, type Application } from "../../../services/application-service";
 import { toast } from "sonner";
 
-function withBase(url: string) {
-  if (!url) return url;
-  if (/^https?:\/\//i.test(url)) return url;
-  const base = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000';
-  return `${base.replace(/\/$/, '')}/${url.replace(/^\//, '')}`;
+function apiBase() {
+  return (process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000').replace(/\/$/, '');
+}
+function dlTranscript(appId: number, fileId?: number) {
+  return fileId
+    ? `${apiBase()}/api/applications/${appId}/transcripts/${fileId}/download/`
+    : `${apiBase()}/api/applications/${appId}/transcript/download/`;
+}
+function dlPassport(appId: number, fileId?: number) {
+  return fileId
+    ? `${apiBase()}/api/applications/${appId}/passports/${fileId}/download/`
+    : `${apiBase()}/api/applications/${appId}/passport/download/`;
 }
 
 export default function ViewApplicationPage() {
@@ -219,9 +226,9 @@ export default function ViewApplicationPage() {
                         <Button 
                           size="sm" 
                           variant="outline"
-                          onClick={() => window.open(withBase(f.file), '_blank')}
+                          onClick={() => window.open(dlTranscript(application.id, f.id), '_blank')}
                         >
-                          View
+                          Download
                         </Button>
                       </li>
                     );
@@ -239,9 +246,9 @@ export default function ViewApplicationPage() {
                     <Button 
                       size="sm" 
                       variant="outline"
-                      onClick={() => window.open(withBase(application.transcript_documents!), '_blank')}
+                      onClick={() => window.open(dlTranscript(application.id), '_blank')}
                     >
-                      View
+                      Download
                     </Button>
                   </li>
                 </ul>
@@ -266,9 +273,9 @@ export default function ViewApplicationPage() {
                         <Button 
                           size="sm" 
                           variant="outline"
-                          onClick={() => window.open(withBase(p.image), '_blank')}
+                          onClick={() => window.open(dlPassport(application.id, p.id), '_blank')}
                         >
-                          View
+                          Download
                         </Button>
                       </li>
                     );
@@ -286,9 +293,9 @@ export default function ViewApplicationPage() {
                     <Button 
                       size="sm" 
                       variant="outline"
-                      onClick={() => window.open(withBase(application.passport_photo!), '_blank')}
+                      onClick={() => window.open(dlPassport(application.id), '_blank')}
                     >
-                      View
+                      Download
                     </Button>
                   </li>
                 </ul>
