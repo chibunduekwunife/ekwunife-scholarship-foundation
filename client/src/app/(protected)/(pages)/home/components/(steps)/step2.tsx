@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import { useFormContext } from "react-hook-form";
 import {
   FormField,
@@ -111,7 +112,7 @@ export default function Step2() {
                   <input
                     type="file"
                     multiple
-                    accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
+                    accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.webp"
                     className="hidden"
                     onChange={(e) => {
                       const files = Array.from(e.target.files || []);
@@ -141,9 +142,16 @@ export default function Step2() {
                   <ul className="space-y-2">
                     {value.map((f: File, idx: number) => (
                       <li key={idx} className="flex items-center justify-between gap-3 rounded-md border bg-white/50 dark:bg-muted px-3 py-2 text-xs">
-                        <div className="flex flex-col flex-1 min-w-0">
-                          <span className="font-medium truncate">{f.name}</span>
-                          <span className="text-[10px] text-muted-foreground">{(f.size/1024).toFixed(1)} KB</span>
+                        <div className="flex items-center gap-3 flex-1 min-w-0">
+                          {f.type?.startsWith('image/') ? (
+                            <LocalFileThumb file={f} alt={f.name} />
+                          ) : (
+                            <FileTypeBadge name={f.name} mime={f.type} />
+                          )}
+                          <div className="flex flex-col min-w-0">
+                            <span className="font-medium truncate">{f.name}</span>
+                            <span className="text-[10px] text-muted-foreground">{(f.size/1024).toFixed(1)} KB</span>
+                          </div>
                         </div>
                         <button type="button" onClick={() => { const next = value.filter((_: File, i: number) => i !== idx); onChange(next); }} className="text-destructive hover:underline">Remove</button>
                       </li>
@@ -204,9 +212,12 @@ export default function Step2() {
                   <ul className="space-y-2">
                     {value.map((f: File, idx: number) => (
                       <li key={idx} className="flex items-center justify-between gap-3 rounded-md border bg-white/50 dark:bg-muted px-3 py-2 text-xs">
-                        <div className="flex flex-col flex-1 min-w-0">
-                          <span className="font-medium truncate">{f.name}</span>
-                          <span className="text-[10px] text-muted-foreground">{(f.size/1024).toFixed(1)} KB</span>
+                        <div className="flex items-center gap-3 flex-1 min-w-0">
+                          <LocalFileThumb file={f} alt={f.name} />
+                          <div className="flex flex-col min-w-0">
+                            <span className="font-medium truncate">{f.name}</span>
+                            <span className="text-[10px] text-muted-foreground">{(f.size/1024).toFixed(1)} KB</span>
+                          </div>
                         </div>
                         <button type="button" onClick={() => { const next = value.filter((_: File, i: number) => i !== idx); onChange(next); }} className="text-destructive hover:underline">Remove</button>
                       </li>
@@ -223,17 +234,62 @@ export default function Step2() {
   );
 }
 
-// Helper component for existing files
+// Helper component for existing files with optional thumbnails
 function ExistingFilesList({ items, onRemove }: { items: { id: number; url: string; name?: string }[]; onRemove: (id: number)=> void }) {
   if (!items?.length) return null;
   return (
     <ul className="space-y-2">
-      {items.map((item) => (
-        <li key={item.id} className="flex items-center justify-between gap-3 rounded-md border bg-white/50 dark:bg-muted px-3 py-2 text-xs">
-          <a href={item.url} target="_blank" rel="noreferrer" className="truncate underline text-blue-600">{item.name || item.url.split('/').pop()}</a>
-          <button type="button" onClick={() => onRemove(item.id)} className="text-destructive hover:underline">Remove</button>
-        </li>
-      ))}
+      {items.map((item) => {
+        const isImg = isImageUrl(item.url);
+        const displayName = item.name || item.url.split('/').pop() || 'file';
+        return (
+          <li key={item.id} className="flex items-center justify-between gap-3 rounded-md border bg-white/50 dark:bg-muted px-3 py-2 text-xs">
+            <div className="flex items-center gap-3 flex-1 min-w-0">
+              {isImg ? (
+                <img src={item.url} alt={displayName} className="w-10 h-10 rounded object-cover border" />
+              ) : (
+                <FileTypeBadge name={displayName} />
+              )}
+              <a href={item.url} target="_blank" rel="noreferrer" className="truncate underline text-blue-600">{displayName}</a>
+            </div>
+            <button type="button" onClick={() => onRemove(item.id)} className="text-destructive hover:underline">Remove</button>
+          </li>
+        );
+      })}
     </ul>
   );
+}
+
+// Thumbnail for local File objects with safe object URL handling
+function LocalFileThumb({ file, alt }: { file: File; alt?: string }) {
+  const [src, setSrc] = useState<string | null>(null);
+  useEffect(() => {
+    const url = URL.createObjectURL(file);
+    setSrc(url);
+    return () => URL.revokeObjectURL(url);
+  }, [file]);
+  if (!src) return <div className="w-10 h-10 rounded border bg-muted" />;
+  return <img src={src} alt={alt || file.name} className="w-10 h-10 rounded object-cover border" />;
+}
+
+// Simple badge/icon for non-image files
+function FileTypeBadge({ name, mime }: { name: string; mime?: string }) {
+  const ext = (name.split('.').pop() || '').toLowerCase();
+  let label = 'FILE';
+  if (mime === 'application/pdf' || ext === 'pdf') label = 'PDF';
+  else if (['doc', 'docx'].includes(ext)) label = 'DOC';
+  return (
+    <div className="w-10 h-10 rounded border bg-muted text-[10px] flex items-center justify-center text-muted-foreground">
+      {label}
+    </div>
+  );
+}
+
+function isImageUrl(url: string) {
+  try {
+    const path = new URL(url, typeof window !== 'undefined' ? window.location.href : 'http://localhost').pathname;
+    return /\.(png|jpe?g|webp|gif|bmp|svg)$/i.test(path);
+  } catch {
+    return /\.(png|jpe?g|webp|gif|bmp|svg)$/i.test(url);
+  }
 }
