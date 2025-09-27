@@ -196,9 +196,9 @@ export default function ViewApplicationPage() {
           
           {/* Documents */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t">
-            {/* Transcript documents list */}
+            {/* Result/Certificate documents list */}
             <div>
-              <label className="text-sm font-medium text-gray-600">Transcript Documents</label>
+              <label className="text-sm font-medium text-gray-600">Result/Certificate Documents</label>
               {application.transcript_files && application.transcript_files.length > 0 ? (
                 <ul className="mt-2 space-y-2">
                   {application.transcript_files.map((f) => {
