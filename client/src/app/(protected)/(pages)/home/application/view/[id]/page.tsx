@@ -9,6 +9,13 @@ import { ArrowLeft, Edit, FileText, User, GraduationCap, PenTool } from "lucide-
 import { getApplication, type Application } from "../../../services/application-service";
 import { toast } from "sonner";
 
+function withBase(url: string) {
+  if (!url) return url;
+  if (/^https?:\/\//i.test(url)) return url;
+  const base = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000';
+  return `${base.replace(/\/$/, '')}/${url.replace(/^\//, '')}`;
+}
+
 export default function ViewApplicationPage() {
   const params = useParams();
   const router = useRouter();
@@ -212,7 +219,7 @@ export default function ViewApplicationPage() {
                         <Button 
                           size="sm" 
                           variant="outline"
-                          onClick={() => window.open(f.file, '_blank')}
+                          onClick={() => window.open(withBase(f.file), '_blank')}
                         >
                           View
                         </Button>
@@ -232,7 +239,7 @@ export default function ViewApplicationPage() {
                     <Button 
                       size="sm" 
                       variant="outline"
-                      onClick={() => window.open(application.transcript_documents!, '_blank')}
+                      onClick={() => window.open(withBase(application.transcript_documents!), '_blank')}
                     >
                       View
                     </Button>
@@ -259,7 +266,7 @@ export default function ViewApplicationPage() {
                         <Button 
                           size="sm" 
                           variant="outline"
-                          onClick={() => window.open(p.image, '_blank')}
+                          onClick={() => window.open(withBase(p.image), '_blank')}
                         >
                           View
                         </Button>
@@ -279,7 +286,7 @@ export default function ViewApplicationPage() {
                     <Button 
                       size="sm" 
                       variant="outline"
-                      onClick={() => window.open(application.passport_photo!, '_blank')}
+                      onClick={() => window.open(withBase(application.passport_photo!), '_blank')}
                     >
                       View
                     </Button>

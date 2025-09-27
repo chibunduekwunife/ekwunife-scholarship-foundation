@@ -18,6 +18,14 @@ import {
 import { useState, useEffect } from "react";
 import api from "@/lib/api";
 
+// Helper to build absolute URL for media files coming from the backend
+function withBase(url: string) {
+  if (!url) return url;
+  if (/^https?:\/\//i.test(url)) return url;
+  const base = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000';
+  return `${base.replace(/\/$/, '')}/${url.replace(/^\//, '')}`;
+}
+
 interface Scholarship {
   id: number;
   name: string;
@@ -240,17 +248,18 @@ function ExistingFilesList({ items, onRemove }: { items: { id: number; url: stri
   return (
     <ul className="space-y-2">
       {items.map((item) => {
+        const href = withBase(item.url);
         const isImg = isImageUrl(item.url);
         const displayName = item.name || item.url.split('/').pop() || 'file';
         return (
           <li key={item.id} className="flex items-center justify-between gap-3 rounded-md border bg-white/50 dark:bg-muted px-3 py-2 text-xs">
             <div className="flex items-center gap-3 flex-1 min-w-0">
               {isImg ? (
-                <img src={item.url} alt={displayName} className="w-10 h-10 rounded object-cover border" />
+                <img src={href} alt={displayName} className="w-10 h-10 rounded object-cover border" />
               ) : (
                 <FileTypeBadge name={displayName} />
               )}
-              <a href={item.url} target="_blank" rel="noreferrer" className="truncate underline text-blue-600">{displayName}</a>
+              <a href={href} target="_blank" rel="noreferrer" className="truncate underline text-blue-600">{displayName}</a>
             </div>
             <button type="button" onClick={() => onRemove(item.id)} className="text-destructive hover:underline">Remove</button>
           </li>
