@@ -31,6 +31,20 @@ class ApplicationListCreate(generics.ListCreateAPIView):
                 deadline=date.today() + timedelta(days=365)
             )
         
+        # Normalize upload keys (support both `field` and `field[]`)
+        trans_files = self.request.FILES.getlist('transcript_documents') or self.request.FILES.getlist('transcript_documents[]')
+        pass_files = self.request.FILES.getlist('passport_photo') or self.request.FILES.getlist('passport_photo[]')
+
+        # If multi-file uploads are present, prevent saving single-file fields on the Application model
+        try:
+            vd = serializer.validated_data
+            if trans_files:
+                vd.pop('transcript_documents', None)
+            if pass_files:
+                vd.pop('passport_photo', None)
+        except Exception:
+            pass
+        
         if serializer.is_valid():
             # Get scholarship based on scholarship_type or use default
             scholarship_type = serializer.validated_data.get('scholarship_type', '')
@@ -44,13 +58,22 @@ class ApplicationListCreate(generics.ListCreateAPIView):
             if not scholarship:
                 scholarship = Scholarship.objects.first()
                 
-            serializer.save(applicant=self.request.user, scholarship=scholarship)
+            # Avoid double-saving temp uploaded files
+            has_trans = bool(trans_files)
+            has_pass = bool(pass_files)
+            save_kwargs = {'applicant': self.request.user, 'scholarship': scholarship}
+            if has_trans:
+                save_kwargs['transcript_documents'] = None
+            if has_pass:
+                save_kwargs['passport_photo'] = None
+
+            serializer.save(**save_kwargs)
             app_instance = serializer.instance
             # Handle multiple uploads
-            for f in self.request.FILES.getlist('transcript_documents'):
+            for f in trans_files:
                 from .models import ApplicationTranscript
                 ApplicationTranscript.objects.create(application=app_instance, file=f)
-            for img in self.request.FILES.getlist('passport_photo'):
+            for img in pass_files:
                 from .models import ApplicationPassportPhoto
                 ApplicationPassportPhoto.objects.create(application=app_instance, image=img)
         else:
@@ -109,7 +132,20 @@ class ApplicationDetail(generics.RetrieveUpdateAPIView):
         return get_object_or_404(Application, id=application_id, applicant=self.request.user)
     
     def perform_update(self, serializer):
-        # Handle scholarship type updates
+        # Normalize upload keys (support both `field` and `field[]`)
+        trans_files = self.request.FILES.getlist('transcript_documents') or self.request.FILES.getlist('transcript_documents[]')
+        pass_files = self.request.FILES.getlist('passport_photo') or self.request.FILES.getlist('passport_photo[]')
+
+        # If multi-file uploads are present, prevent saving single-file fields again on the Application model
+        try:
+            vd = serializer.validated_data
+            if trans_files:
+                vd.pop('transcript_documents', None)
+            if pass_files:
+                vd.pop('passport_photo', None)
+        except Exception:
+            pass
+
         if serializer.is_valid():
             scholarship_type = serializer.validated_data.get('scholarship_type', '')
             
@@ -136,10 +172,10 @@ class ApplicationDetail(generics.RetrieveUpdateAPIView):
                 ApplicationPassportPhoto.objects.filter(application=app_instance, id__in=delete_passport_ids).delete()
 
             # Add new files if provided
-            for f in self.request.FILES.getlist('transcript_documents'):
+            for f in trans_files:
                 from .models import ApplicationTranscript
                 ApplicationTranscript.objects.create(application=app_instance, file=f)
-            for img in self.request.FILES.getlist('passport_photo'):
+            for img in pass_files:
                 from .models import ApplicationPassportPhoto
                 ApplicationPassportPhoto.objects.create(application=app_instance, image=img)
 
