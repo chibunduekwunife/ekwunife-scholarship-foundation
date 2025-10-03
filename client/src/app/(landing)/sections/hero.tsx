@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
+import Link from "next/link";
 
 export default function HeroSection() {
   return (
@@ -9,7 +10,9 @@ export default function HeroSection() {
         <p className="font-semibold text-lg">
           Celebrating the legacy of Christopher Ekwunife by nurturing future leaders through academic excellence.
         </p>
-        <Button className="mt-5 w-[250px] md:w-[150px]">Apply Here</Button>
+        <Button className="mt-5 w-[250px] md:w-[150px]" asChild>
+          <Link href="/auth/login">Apply Here</Link>
+        </Button>
       </div>
       <div className="hidden md:flex w-[55%] justify-end">
         {/* Full illustration shown (no cropping) at maximum safe size */}

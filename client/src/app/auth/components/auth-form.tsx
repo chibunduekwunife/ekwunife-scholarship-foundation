@@ -217,7 +217,7 @@ export default function AuthForm({
               {isExistingUser ? (
                 <div className="flex flex-col w-full items-center text-center">
                   <p>
-                    Don&apos;t have a DAAD-ID yet?
+                    Not an applicant yet?
                     <Button
                       variant={"link"}
                       className="text-primary p-2"

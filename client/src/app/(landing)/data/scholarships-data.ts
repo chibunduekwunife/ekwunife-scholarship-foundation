@@ -3,10 +3,10 @@ import type { ScholarshipPageFormat } from "../types/page-format.types";
 export const SSCE_data: ScholarshipPageFormat = {
   scholarshipDescription: {
     heading: "Scholarship Description",
-    subheading: "A total of ₦1,000,000 will be awarded to the best-performing students from Ekwulobia:",
+    subheading: "Merit-based prizes will be awarded to the best-performing students from Ekwulobia:",
     items: [
-      "₦100,000 each to the top 7 students from Ekwulobia",
-      "₦100,000 each to the top 3 students from Umuchi village"
+      "Awards will be given to the top 7 students from Ekwulobia",
+      "Additional recognition will be given to the top 3 students from Umuchi village"
     ],
     note: "Candidates must upload their official Documents",
   },
@@ -32,18 +32,14 @@ export const SSCE_data: ScholarshipPageFormat = {
   },
   applicationDeadline: {
     heading: "Application Deadline",
-    subheading: "Friday, July 30, 2025 (11:59 PM Nigerian Time)",
+    subheading: "Friday, October 10, 2025 (11:59 PM Nigerian Time)",
   }
 };
 
 export const BGUS_data: ScholarshipPageFormat = {
   scholarshipDescription: {
     heading: "Scholarship Description",
-    subheading: "In recognition of academic consistency, two prizes will be awarded to:",
-    items: [
-      "₦100,000 to the best graduating student from Ekwulobia town",
-      "₦100,000 to the best graduating student from Umuchi village"
-    ],
+    subheading: "In recognition of academic consistency and excellence scholarship prizes will be awarded to select best graduating secondary school and university students each year",
     note: "Candidates must upload their official university certificate and transcript for evaluation."
   },
   eligibilityCriteria: {
@@ -68,6 +64,6 @@ export const BGUS_data: ScholarshipPageFormat = {
   },
   applicationDeadline: {
     heading: "Application Deadline",
-    subheading: "Friday, July 30, 2025 (11:59 PM Nigerian Time)",
+    subheading: "Friday, October 10, 2025 (11:59 PM Nigerian Time)",
   }
 };

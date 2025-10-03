@@ -13,6 +13,6 @@ export const navLinks = [
     href: "/scholarships",
     icon: LucideGraduationCap,
   },
-  { id: 3, name: "Contact us", href: "/contact-us", icon: PhoneCall },
+  { id: 3, name: "Contact Us", href: "/contact-us", icon: PhoneCall },
   { id: 4, name: "Gallery", href: "/gallery", icon: GalleryHorizontal },
 ];

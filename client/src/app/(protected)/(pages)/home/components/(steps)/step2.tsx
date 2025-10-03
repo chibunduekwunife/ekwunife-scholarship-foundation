@@ -112,7 +112,7 @@ export default function Step2() {
         name="transcript_documents"
         render={({ field: { onChange, value = [], ...field } }) => (
           <FormItem>
-            <FormLabel>Upload SSCE Result/Certificate and/or JAMB Result</FormLabel>
+            <FormLabel>Upload JAMB Result and SSCE Certificate</FormLabel>
             <FormControl>
               <div className="space-y-3">
                 {/* uploader */}

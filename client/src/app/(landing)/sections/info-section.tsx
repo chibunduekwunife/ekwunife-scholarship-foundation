@@ -15,9 +15,9 @@ export default function InfoSection() {
           right here.
         </p>
       </div>
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-3 my-10">
+      <div className="grid grid-cols-1 md:grid-cols-2 justify-items-center items-start gap-10 my-10 max-w-[640px] mx-auto">
         {info_cards.map((card) => (
-          <div key={card.id} className="flex flex-col justify-center items-center mt-7">
+          <div key={card.id} className="flex flex-col items-center w-[300px]">
             <Image 
                 alt={card.title} 
                 src={card.src} 
@@ -25,9 +25,9 @@ export default function InfoSection() {
                 height={300}
                 className="rounded-2xl object-cover h-[200px]"
             />
-            <div className="flex flex-col gap-2 mt-7 text-center">
+            <div className="flex flex-col gap-2 mt-7 text-center w-full">
                 <h2 className="text-lg font-semibold">{card.title}</h2>
-                <p className="text-sm max-w-[80%] mx-auto">{card.description}</p>
+                <p className="text-sm">{card.description}</p>
             </div>
           </div>
         ))}

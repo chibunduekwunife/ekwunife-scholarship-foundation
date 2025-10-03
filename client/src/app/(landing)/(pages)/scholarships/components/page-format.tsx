@@ -14,22 +14,24 @@ export default function PageFormat({ data }: ScholarshipPageFormatProps) {
               {section.heading}
             </h2>
           )}
-          {section.subheading && (
-            <p className="mb-2 text-lg">{section.subheading}</p>
-          )}
-          {section.items && section.items.length > 0 && (
-            <ul className="mb-2 list-disc list-inside space-y-1">
-              {section.items.map((item, i) => (
-                <li key={i}>{item}</li>
-              ))}
-            </ul>
-          )}
-          {section.note && (
-            <p className="font-medium">
-              <span className="text-red-600">Note: </span>
-              {section.note}
-            </p>
-          )}
+          <div className="w-full lg:max-w-3xl">
+            {section.subheading && (
+              <p className="mb-2 text-lg">{section.subheading}</p>
+            )}
+            {section.items && section.items.length > 0 && (
+              <ul className="mb-2 list-disc list-inside space-y-1">
+                {section.items.map((item, i) => (
+                  <li key={i}>{item}</li>
+                ))}
+              </ul>
+            )}
+            {section.note && (
+              <p className="font-medium">
+                <span className="text-red-600">Note: </span>
+                {section.note}
+              </p>
+            )}
+          </div>
         </div>
       ))}
     </div>

@@ -43,7 +43,6 @@ export default function ApplicationSection() {
     <div className="flex flex-col my-20 md:mt-25 items-center text-center">
       <div className="flex flex-col gap-4 mb-10">
         <h1 className="text-3xl font-semibold">Apply for Scholarship</h1>
-        <span className="text-gray-400">Applications for now are closed.</span>
       </div>
       <div className="flex w-[85%] md:w-[50%] justify-center">
         <Form {...form}>

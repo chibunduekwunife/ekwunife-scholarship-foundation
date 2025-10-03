@@ -3,42 +3,28 @@ export const info_cards = [
     id: 1,
     title: "Who can Apply",
     description:
-      "Are you eligible for a scholarship? Learn more about Ekwunife scholarship foundation eligibility and work experience requirements.",
-    src: "/black_applicant.png", // updated
+      "Open to disciplined and dedicated students with a proven passion for education through SSCE, JAMB, and university performance. At this phase, eligibility is limited to Umuowelle Village students, with plans to expand gradually.",
+    src: "/black_applicant.png",
   },
   {
     id: 2,
-    title: "Application Guidance",
+    title: "Why the Scholarship",
     description:
-      "Before you submit your application, we encourage you to review the provided guidelines carefully.",
-    src: "/black_meeting.png", // updated
+      "The Foundation exists to inspire passion for learning and support committed students in reaching their potential, carrying forward the legacy of Christopher Okoye Ekwunife.",
+    src: "/question_mark.jpg",
   },
   {
     id: 3,
-    title: "Explore Master’s Programs",
+    title: "Application Guidelines",
     description:
-      "Looking for the right course to support your application? Our course finder is designed to simplify your search.",
-    src: "/black_students.png", // updated
+      "This season is for Umuowelle, Umuchi students who have just completed SSCE and JAMB. Applications open October 5, 2025 and close October 10, 2025.",
+    src: "/black_meeting.png",
   },
   {
     id: 4,
-    title: "Application Timeline",
-    description:
-      "Curious about how long it takes to receive a decision? Get a clear understanding of each stage by reviewing the application timeline.",
-    src: "/time.jpg",
-  },
-  {
-    id: 5,
     title: "News & Events",
     description:
-      "Stay up to date with the latest announcements, opportunities, and activities related to our scholarship programs.",
+      "Stay up to date with the latest announcements, opportunities, and activities.",
     src: "/newspaper.jpg",
-  },
-  {
-    id: 6,
-    title: "Why the scholarship",
-    description:
-      "Looking for the right course to support your application? Our course finder is designed to simplify your search.",
-    src: "/question_mark.jpg",
   },
 ];

@@ -8,7 +8,7 @@ export default function Footer() {
         <div className="text-center md:text-start">
           <span>&copy; Copyright 2025</span>
           <p>
-            Ekwunife Foundation scholarship are supported by friends, family, 
+            Ekwunife Foundation Scholarship programs are supported by friends, family,
             and partner organizations.
           </p>
         </div>

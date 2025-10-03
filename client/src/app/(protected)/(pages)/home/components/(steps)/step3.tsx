@@ -6,9 +6,16 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
+// Removed Input import; using Select instead for referral source
 import { Textarea } from "@/components/ui/textarea";
 import { useFormContext } from "react-hook-form";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export default function Step3() {
   const { control, watch } = useFormContext();
@@ -32,6 +39,17 @@ export default function Step3() {
     if (wordCount > maxWords) return "text-red-600";
     return "text-green-600";
   };
+
+  // Referral options (keep as plain strings to match backend field)
+  const REFERRAL_OPTIONS = [
+    "Website",
+    "Social media",
+    "Friends/Family",
+    "School announcement",
+    "Community/Church",
+    "WhatsApp group",
+    "Other",
+  ];
 
   return (
     <div className="flex flex-col gap-7 max-w-lg my-4">
@@ -70,14 +88,19 @@ export default function Step3() {
         render={({ field }) => (
           <FormItem>
             <FormLabel>
-              How did you first learn about this program? Please provide
-              specific information. <span className="text-red-500">*</span>
+              How did you first learn about this program? <span className="text-red-500">*</span>
             </FormLabel>
             <FormControl>
-              <Input
-                placeholder="(eg Website, Social media, friends)"
-                {...field}
-              />
+              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select referral source" />
+                </SelectTrigger>
+                <SelectContent>
+                  {REFERRAL_OPTIONS.map((opt) => (
+                    <SelectItem key={opt} value={opt}>{opt}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </FormControl>
             <FormMessage />
           </FormItem>
