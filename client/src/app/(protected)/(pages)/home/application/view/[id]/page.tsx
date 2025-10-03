@@ -400,18 +400,18 @@ export default function ViewApplicationPage() {
 
       {/* File Viewer Modal */}
       <Dialog open={viewerOpen} onOpenChange={(open) => { setViewerOpen(open); }}>
-        <DialogContent className="max-w-[95vw] md:max-w-4xl">
-          <DialogHeader>
-            <DialogTitle className="truncate">{viewer?.title || 'Preview'}</DialogTitle>
+        <DialogContent className="w-[96vw] max-w-[96vw] md:max-w-4xl p-4 md:p-6">
+          <DialogHeader className="max-w-full">
+            <DialogTitle className="truncate max-w-full pr-8">{viewer?.title || 'Preview'}</DialogTitle>
           </DialogHeader>
           <div className="mt-2">
             {viewer?.kind === 'image' && (
-              <div className="w-full flex items-center justify-center">
-                <img src={viewer.url} alt={viewer.title} className="max-h-[80vh] w-auto rounded border" />
+              <div className="w-full flex items-center justify-center overflow-hidden">
+                <img src={viewer.url} alt={viewer.title} className="max-w-full max-h-[70vh] h-auto w-auto rounded border" />
               </div>
             )}
             {viewer?.kind === 'pdf' && (
-              <iframe src={viewer.url} className="w-[90vw] md:w-full h-[80vh] border rounded" />
+              <iframe src={viewer.url} className="w-full h-[75vh] border rounded" />
             )}
             {viewer?.kind === 'other' && (
               <div className="p-4 text-sm text-gray-700">
@@ -422,11 +422,11 @@ export default function ViewApplicationPage() {
               </div>
             )}
           </div>
-          <DialogFooter className="gap-2">
+          <DialogFooter className="gap-2 flex flex-col sm:flex-row">
             {viewer?.downloadUrl && (
-              <Button variant="outline" onClick={() => handleDownload(viewer.downloadUrl, viewer.title)}>Download</Button>
+              <Button variant="outline" className="w-full sm:w-auto" onClick={() => handleDownload(viewer.downloadUrl, viewer.title)}>Download</Button>
             )}
-            <Button onClick={() => setViewerOpen(false)}>Close</Button>
+            <Button className="w-full sm:w-auto" onClick={() => setViewerOpen(false)}>Close</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

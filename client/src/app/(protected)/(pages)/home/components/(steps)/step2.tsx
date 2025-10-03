@@ -149,7 +149,7 @@ export default function Step2() {
                 {Array.isArray(value) && value.length > 0 && (
                   <ul className="space-y-2">
                     {value.map((f: File, idx: number) => (
-                      <li key={idx} className="flex items-center justify-between gap-3 rounded-md border bg-white/50 dark:bg-muted px-3 py-2 text-xs">
+                      <li key={idx} className="flex flex-wrap items-center justify-between gap-3 rounded-md border bg-white/50 dark:bg-muted px-3 py-2 text-xs">
                         <div className="flex items-center gap-3 flex-1 min-w-0">
                           {f.type?.startsWith('image/') ? (
                             <LocalFileThumb file={f} alt={f.name} />
@@ -157,11 +157,11 @@ export default function Step2() {
                             <FileTypeBadge name={f.name} mime={f.type} />
                           )}
                           <div className="flex flex-col min-w-0">
-                            <span className="font-medium truncate">{f.name}</span>
+                            <span className="font-medium truncate max-w-[60vw] sm:max-w-xs">{f.name}</span>
                             <span className="text-[10px] text-muted-foreground">{(f.size/1024).toFixed(1)} KB</span>
                           </div>
                         </div>
-                        <button type="button" onClick={() => { const next = value.filter((_: File, i: number) => i !== idx); onChange(next); }} className="text-destructive hover:underline">Remove</button>
+                        <button type="button" onClick={() => { const next = value.filter((_: File, i: number) => i !== idx); onChange(next); }} className="text-destructive hover:underline shrink-0">Remove</button>
                       </li>
                     ))}
                   </ul>
@@ -219,15 +219,15 @@ export default function Step2() {
                 {Array.isArray(value) && value.length > 0 && (
                   <ul className="space-y-2">
                     {value.map((f: File, idx: number) => (
-                      <li key={idx} className="flex items-center justify-between gap-3 rounded-md border bg-white/50 dark:bg-muted px-3 py-2 text-xs">
+                      <li key={idx} className="flex flex-wrap items-center justify-between gap-3 rounded-md border bg-white/50 dark:bg-muted px-3 py-2 text-xs">
                         <div className="flex items-center gap-3 flex-1 min-w-0">
                           <LocalFileThumb file={f} alt={f.name} />
                           <div className="flex flex-col min-w-0">
-                            <span className="font-medium truncate">{f.name}</span>
+                            <span className="font-medium truncate max-w-[60vw] sm:max-w-xs">{f.name}</span>
                             <span className="text-[10px] text-muted-foreground">{(f.size/1024).toFixed(1)} KB</span>
                           </div>
                         </div>
-                        <button type="button" onClick={() => { const next = value.filter((_: File, i: number) => i !== idx); onChange(next); }} className="text-destructive hover:underline">Remove</button>
+                        <button type="button" onClick={() => { const next = value.filter((_: File, i: number) => i !== idx); onChange(next); }} className="text-destructive hover:underline shrink-0">Remove</button>
                       </li>
                     ))}
                   </ul>
@@ -252,16 +252,16 @@ function ExistingFilesList({ items, onRemove }: { items: { id: number; url: stri
         const isImg = isImageUrl(item.url);
         const displayName = item.name || item.url.split('/').pop() || 'file';
         return (
-          <li key={item.id} className="flex items-center justify-between gap-3 rounded-md border bg-white/50 dark:bg-muted px-3 py-2 text-xs">
+          <li key={item.id} className="flex flex-wrap items-center justify-between gap-3 rounded-md border bg-white/50 dark:bg-muted px-3 py-2 text-xs">
             <div className="flex items-center gap-3 flex-1 min-w-0">
               {isImg ? (
                 <img src={href} alt={displayName} className="w-10 h-10 rounded object-cover border" />
               ) : (
                 <FileTypeBadge name={displayName} />
               )}
-              <a href={href} target="_blank" rel="noreferrer" className="truncate underline text-blue-600">{displayName}</a>
+              <a href={href} target="_blank" rel="noreferrer" className="truncate underline text-blue-600 max-w-[60vw] sm:max-w-xs">{displayName}</a>
             </div>
-            <button type="button" onClick={() => onRemove(item.id)} className="text-destructive hover:underline">Remove</button>
+            <button type="button" onClick={() => onRemove(item.id)} className="text-destructive hover:underline shrink-0">Remove</button>
           </li>
         );
       })}
