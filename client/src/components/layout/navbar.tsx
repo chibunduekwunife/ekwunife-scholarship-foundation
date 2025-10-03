@@ -71,9 +71,8 @@ export default function Navbar({
               </Button>
               <Button
                 variant={"outline"}
-                size={"sm"}
                 onClick={() => router.push("/admin/login")}
-                className="text-xs border-gray-300 text-gray-600 hover:bg-gray-100"
+                className="border-gray-300 text-gray-600 hover:bg-gray-100"
               >
                 Admin?
               </Button>

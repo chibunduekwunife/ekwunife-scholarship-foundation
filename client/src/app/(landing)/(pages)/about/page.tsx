@@ -9,13 +9,27 @@ export default function AboutPage() {
           About us
         </h1>
       </div>
-      <Image
-        width={1000}
-        height={1000}
-        src={"/about-page-img.jpg"}
-        alt="graduates"
-        className="w-full h-64 md:h-130 object-cover"
-      />
+      {/* Two images side by side (always horizontal), shrink on small screens */}
+      <div className="w-full grid grid-cols-2 gap-2 sm:gap-4 md:gap-8">
+        <div className="relative h-40 sm:h-56 md:h-80 lg:h-96">
+          <Image
+            fill
+            src="/GP1.jpg"
+            alt="GP1"
+            className="object-cover object-top rounded"
+            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 45vw, 600px"
+          />
+        </div>
+        <div className="relative h-40 sm:h-56 md:h-80 lg:h-96">
+          <Image
+            fill
+            src="/GP2.jpeg"
+            alt="GP2"
+            className="object-cover object-top rounded"
+            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 45vw, 600px"
+          />
+        </div>
+      </div>
       <div className="flex flex-col gap-8 my-15 md:my-20 md:text-lg">
         {aboutPageParagraphs.map((par) => (
           <p key={par.id}>{par.text}</p>
