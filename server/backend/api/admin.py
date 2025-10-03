@@ -1,5 +1,8 @@
 from django.contrib import admin
 from django.utils import timezone
+from django import forms
+from django.utils.safestring import mark_safe
+from django.db import models
 from .models import Scholarship, Application, ApplicationTranscript, ApplicationPassportPhoto
 
 @admin.register(Scholarship)
@@ -20,14 +23,41 @@ class ScholarshipAdmin(admin.ModelAdmin):
         }),
     )
 
+class TargetBlankAdminFileWidget(admin.widgets.AdminFileWidget):
+    def render(self, name, value, attrs=None, renderer=None):
+        html = super().render(name, value, attrs=attrs, renderer=renderer)
+        # Ensure the existing "Currently:" link opens in a new tab
+        try:
+            return mark_safe(html.replace('<a ', '<a target="_blank" rel="noopener noreferrer" '))
+        except Exception:
+            return html
+
+class TranscriptInlineForm(forms.ModelForm):
+    class Meta:
+        model = ApplicationTranscript
+        fields = '__all__'
+        widgets = {
+            'file': TargetBlankAdminFileWidget,
+        }
+
+class PassportInlineForm(forms.ModelForm):
+    class Meta:
+        model = ApplicationPassportPhoto
+        fields = '__all__'
+        widgets = {
+            'image': TargetBlankAdminFileWidget,
+        }
+
 class TranscriptInline(admin.TabularInline):
     model = ApplicationTranscript
+    form = TranscriptInlineForm
     extra = 0
     fields = ('file', 'uploaded_at')
     readonly_fields = ('uploaded_at',)
 
 class PassportPhotoInline(admin.TabularInline):
     model = ApplicationPassportPhoto
+    form = PassportInlineForm
     extra = 0
     fields = ('image', 'uploaded_at')
     readonly_fields = ('uploaded_at',)
@@ -39,6 +69,12 @@ class ApplicationAdmin(admin.ModelAdmin):
     search_fields = ['full_name', 'phone_number', 'school']
     readonly_fields = ['submitted_at']
     inlines = [TranscriptInline, PassportPhotoInline]
+
+    # Make single-file fields open in new tab too
+    formfield_overrides = {
+        models.FileField: {'widget': TargetBlankAdminFileWidget},
+        models.ImageField: {'widget': TargetBlankAdminFileWidget},
+    }
     
     fieldsets = (
         ('Personal Information', {
