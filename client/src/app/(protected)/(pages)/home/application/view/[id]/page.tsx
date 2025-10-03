@@ -179,22 +179,26 @@ export default function ViewApplicationPage() {
   return (
     <div className="flex flex-col gap-6 max-w-4xl mx-auto p-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <Button 
-            variant="outline" 
-            size="sm"
-            onClick={() => router.push("/home")}
-            className="flex items-center gap-2"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            Back to Applications
-          </Button>
+      <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+        {/* Left group: back button then title/date (stacked on small, inline on md) */}
+        <div className="flex flex-col gap-3 md:flex-row md:items-center md:gap-4">
+          <div>
+            <Button 
+              variant="outline" 
+              size="sm"
+              onClick={() => router.push("/home")}
+              className="flex items-center gap-2"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              Back to Applications
+            </Button>
+          </div>
           <div>
             <h1 className="text-2xl font-bold text-primary">Application Details</h1>
             <p className="text-gray-600">Submitted on {new Date(application.submitted_at).toLocaleDateString()}</p>
           </div>
         </div>
+        {/* Right group: status + edit (always inline) */}
         <div className="flex items-center gap-3">
           <Badge className={`${getStatusColor(application.status)} text-white`}>
             {getStatusText(application.status)}
