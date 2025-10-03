@@ -65,12 +65,14 @@ export default function Navbar({
             <div className="flex items-center gap-2">
               <Button
                 variant={"secondary"}
+                size={"sm"}
                 onClick={() => router.push("/auth")}
               >
                 Login
               </Button>
               <Button
                 variant={"outline"}
+                size={"sm"}
                 onClick={() => router.push("/admin/login")}
                 className="border-gray-300 text-gray-600 hover:bg-gray-100"
               >
