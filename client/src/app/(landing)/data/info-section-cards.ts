@@ -3,7 +3,7 @@ export const info_cards = [
     id: 1,
     title: "Who can Apply",
     description:
-      "Open to disciplined and dedicated students with a proven passion for education through SSCE, JAMB, and university performance. At this phase, eligibility is limited to Umuowelle Village students, with plans to expand gradually.",
+      "Open to disciplined and dedicated students with a proven passion for education through SSCE, JAMB, and university performance.",
     src: "/black_applicant.png",
   },
   {
