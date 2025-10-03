@@ -400,11 +400,16 @@ export default function ViewApplicationPage() {
 
       {/* File Viewer Modal */}
       <Dialog open={viewerOpen} onOpenChange={(open) => { setViewerOpen(open); }}>
-        <DialogContent className="w-[96vw] max-w-[96vw] md:max-w-4xl p-4 md:p-6">
+        <DialogContent className="w-[94vw] max-w-[94vw] md:max-w-4xl p-3 md:p-6 max-h-[90vh] overflow-hidden">
           <DialogHeader className="max-w-full">
-            <DialogTitle className="truncate max-w-full pr-8">{viewer?.title || 'Preview'}</DialogTitle>
+            <DialogTitle className="w-full truncate break-all pr-8">
+              {(() => {
+                const t = viewer?.title || 'Preview';
+                return t.length > 60 ? `${t.slice(0, 50)}…${t.slice(-8)}` : t;
+              })()}
+            </DialogTitle>
           </DialogHeader>
-          <div className="mt-2">
+          <div className="mt-2 overflow-auto">
             {viewer?.kind === 'image' && (
               <div className="w-full flex items-center justify-center overflow-hidden">
                 <img src={viewer.url} alt={viewer.title} className="max-w-full max-h-[70vh] h-auto w-auto rounded border" />

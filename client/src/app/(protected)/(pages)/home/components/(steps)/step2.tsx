@@ -259,7 +259,7 @@ function ExistingFilesList({ items, onRemove }: { items: { id: number; url: stri
               ) : (
                 <FileTypeBadge name={displayName} />
               )}
-              <a href={href} target="_blank" rel="noreferrer" className="truncate underline text-blue-600 max-w-[60vw] sm:max-w-xs">{displayName}</a>
+              <a href={href} target="_blank" rel="noreferrer" className="truncate underline text-blue-600 max-w-[60vw] sm:max-w-xs" title={displayName}>{displayName}</a>
             </div>
             <button type="button" onClick={() => onRemove(item.id)} className="text-destructive hover:underline shrink-0">Remove</button>
           </li>
