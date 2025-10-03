@@ -128,7 +128,7 @@ export default function ContactUsPage() {
                 <Mail className="text-primary mt-0.5" size={18} />
                 <div>
                   <p className="font-medium">Email</p>
-                  <a href="mailto:info@ekwunifescholarship.org" className="text-primary hover:underline">info@ekwunifescholarship.com</a>
+                  <a href="mailto:info@ekwunifescholarship.com" className="text-primary hover:underline">info@ekwunifescholarship.com</a>
                 </div>
               </div>
               <div className="flex items-start gap-3">

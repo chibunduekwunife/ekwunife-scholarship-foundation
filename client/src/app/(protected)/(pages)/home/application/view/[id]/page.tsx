@@ -10,6 +10,7 @@ import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "
 import { ArrowLeft, Edit, FileText, User, GraduationCap, PenTool } from "lucide-react";
 import { getApplication, type Application } from "../../../services/application-service";
 import { toast } from "sonner";
+import { ACCESS_TOKEN } from "@/lib/constants";
 
 function apiBase() {
   return (process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000').replace(/\/$/, '');
@@ -33,6 +34,24 @@ const isImg = (name: string) => /\.(png|jpe?g|webp|gif|bmp|svg)$/i.test(name);
 const isPdf = (name: string) => /\.pdf$/i.test(name);
 const baseName = (p: string) => (p?.split('/').pop() || 'file');
 
+// Auth helpers for secure preview/download
+function getToken() {
+  if (typeof window === 'undefined') return null;
+  try { return localStorage.getItem(ACCESS_TOKEN); } catch { return null; }
+}
+async function fetchBlobWithAuth(url: string) {
+  const token = getToken();
+  const res = await fetch(url, {
+    headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+    credentials: 'include',
+  });
+  if (!res.ok) throw new Error('Failed to fetch file');
+  const contentType = res.headers.get('Content-Type') || '';
+  const blob = await res.blob();
+  const objectUrl = URL.createObjectURL(blob);
+  return { objectUrl, contentType };
+}
+
 export default function ViewApplicationPage() {
   const params = useParams();
   const router = useRouter();
@@ -43,11 +62,43 @@ export default function ViewApplicationPage() {
   const [viewerOpen, setViewerOpen] = useState(false);
   const [viewer, setViewer] = useState<{ title: string; url: string; downloadUrl?: string; kind: 'image' | 'pdf' | 'other' } | null>(null);
 
-  const openViewer = (title: string, url: string, downloadUrl?: string) => {
-    const name = title.toLowerCase();
-    const kind: 'image'|'pdf'|'other' = isImg(name) ? 'image' : isPdf(name) ? 'pdf' : 'other';
-    setViewer({ title, url, downloadUrl, kind });
-    setViewerOpen(true);
+  // Replace direct open with authenticated preview where possible
+  const viewItem = async (title: string, directUrl: string, downloadUrl?: string) => {
+    try {
+      if (downloadUrl) {
+        const { objectUrl, contentType } = await fetchBlobWithAuth(downloadUrl);
+        const kind: 'image' | 'pdf' | 'other' = contentType.startsWith('image/') ? 'image' : (contentType.includes('pdf') ? 'pdf' : 'other');
+        setViewer({ title, url: objectUrl, downloadUrl, kind });
+      } else {
+        const name = title.toLowerCase();
+        const kind: 'image' | 'pdf' | 'other' = isImg(name) ? 'image' : isPdf(name) ? 'pdf' : 'other';
+        setViewer({ title, url: directUrl, downloadUrl, kind });
+      }
+      setViewerOpen(true);
+    } catch {
+      console.error('Failed to load preview');
+      toast.error('Unable to preview file. You can download it instead.');
+      setViewer({ title, url: directUrl, downloadUrl, kind: 'other' });
+      setViewerOpen(true);
+    }
+  };
+
+  const handleDownload = async (url?: string, filename?: string) => {
+    if (!url) return;
+    try {
+      const { objectUrl } = await fetchBlobWithAuth(url);
+      const a = document.createElement('a');
+      a.href = objectUrl;
+      a.download = filename || 'download';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(objectUrl), 30_000);
+    } catch (e) {
+      console.error('Download failed, falling back to navigation', e);
+      // Fallback: navigate (may require auth session)
+      window.location.href = url;
+    }
   };
 
   useEffect(() => {
@@ -245,7 +296,7 @@ export default function ViewApplicationPage() {
                           <FileText className="h-4 w-4 text-blue-600" />
                           <span className="text-sm text-blue-700 truncate" title={name}>{name}</span>
                         </div>
-                        <Button size="sm" variant="outline" onClick={() => openViewer(name, url, dlTranscript(application.id, f.id))}>View</Button>
+                        <Button size="sm" variant="outline" onClick={() => viewItem(name, url, dlTranscript(application.id, f.id))}>View</Button>
                       </li>
                     );
                   })}
@@ -259,7 +310,7 @@ export default function ViewApplicationPage() {
                         {baseName(application.transcript_documents)}
                       </span>
                     </div>
-                    <Button size="sm" variant="outline" onClick={() => openViewer(baseName(application.transcript_documents!), withBase(application.transcript_documents!), dlTranscript(application.id))}>View</Button>
+                    <Button size="sm" variant="outline" onClick={() => viewItem(baseName(application.transcript_documents!), withBase(application.transcript_documents!), dlTranscript(application.id))}>View</Button>
                   </li>
                 </ul>
               ) : (
@@ -281,7 +332,7 @@ export default function ViewApplicationPage() {
                           <FileText className="h-4 w-4 text-blue-600" />
                           <span className="text-sm text-blue-700 truncate" title={name}>{name}</span>
                         </div>
-                        <Button size="sm" variant="outline" onClick={() => openViewer(name, url, dlPassport(application.id, p.id))}>View</Button>
+                        <Button size="sm" variant="outline" onClick={() => viewItem(name, url, dlPassport(application.id, p.id))}>View</Button>
                       </li>
                     );
                   })}
@@ -295,7 +346,7 @@ export default function ViewApplicationPage() {
                         {baseName(application.passport_photo)}
                       </span>
                     </div>
-                    <Button size="sm" variant="outline" onClick={() => openViewer(baseName(application.passport_photo!), withBase(application.passport_photo!), dlPassport(application.id))}>View</Button>
+                    <Button size="sm" variant="outline" onClick={() => viewItem(baseName(application.passport_photo!), withBase(application.passport_photo!), dlPassport(application.id))}>View</Button>
                   </li>
                 </ul>
               ) : (
@@ -344,7 +395,7 @@ export default function ViewApplicationPage() {
       )}
 
       {/* File Viewer Modal */}
-      <Dialog open={viewerOpen} onOpenChange={setViewerOpen}>
+      <Dialog open={viewerOpen} onOpenChange={(open) => { setViewerOpen(open); }}>
         <DialogContent className="max-w-[95vw] md:max-w-4xl">
           <DialogHeader>
             <DialogTitle className="truncate">{viewer?.title || 'Preview'}</DialogTitle>
@@ -368,8 +419,8 @@ export default function ViewApplicationPage() {
             )}
           </div>
           <DialogFooter className="gap-2">
-            {viewer?.kind === 'other' && viewer?.downloadUrl && (
-              <Button variant="outline" onClick={() => window.open(viewer.downloadUrl!, '_blank')}>Download</Button>
+            {viewer?.downloadUrl && (
+              <Button variant="outline" onClick={() => handleDownload(viewer.downloadUrl, viewer.title)}>Download</Button>
             )}
             <Button onClick={() => setViewerOpen(false)}>Close</Button>
           </DialogFooter>
