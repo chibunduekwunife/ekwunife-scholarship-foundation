@@ -17,7 +17,7 @@ export const info_cards = [
     id: 3,
     title: "Application Guidelines",
     description:
-      "This season is for Umuowelle, Umuchi students who have just completed SSCE and JAMB. Applications open October 5, 2025 and close October 10, 2025.",
+      "This season is for Umuowelle, Umuchi students who have just completed SSCE and JAMB. Applications open October 5, 2025 and close October 11, 2025.",
     src: "/black_meeting.png",
   },
   {

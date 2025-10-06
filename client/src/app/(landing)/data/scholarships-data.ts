@@ -32,7 +32,7 @@ export const SSCE_data: ScholarshipPageFormat = {
   },
   applicationDeadline: {
     heading: "Application Deadline",
-    subheading: "Friday, October 10, 2025 (11:59 PM Nigerian Time)",
+    subheading: "Saturday, October 11, 2025 (11:59 PM Nigerian Time)",
   }
 };
 
@@ -64,6 +64,6 @@ export const BGUS_data: ScholarshipPageFormat = {
   },
   applicationDeadline: {
     heading: "Application Deadline",
-    subheading: "Friday, October 10, 2025 (11:59 PM Nigerian Time)",
+    subheading: "Saturday, October 11, 2025 (11:59 PM Nigerian Time)",
   }
 };
