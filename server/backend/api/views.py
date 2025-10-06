@@ -12,6 +12,8 @@ from django.shortcuts import get_object_or_404
 from django.http import FileResponse, Http404
 import os
 import re
+from django.conf import settings
+from django.core.mail import send_mail
 
 # Create New Application
 class ApplicationListCreate(generics.ListCreateAPIView):
@@ -236,3 +238,36 @@ def download_legacy_passport(request, pk: int):
     safe_full = re.sub(r'[^A-Za-z0-9_-]+', '_', app.full_name)
     filename = f"{name}_{safe_full}{ext}"
     return FileResponse(open(f.path, 'rb'), as_attachment=True, filename=filename)
+
+# ---------------------------------------------
+# Contact endpoint: send email to foundation inbox
+# ---------------------------------------------
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def contact_message(request):
+    name = request.data.get('name', '').strip()
+    email = request.data.get('email', '').strip()
+    subject = request.data.get('subject', '').strip()
+    message = request.data.get('message', '').strip()
+
+    if len(name) < 2 or not email or len(subject) < 3 or len(message) < 10:
+        return Response({"detail": "Invalid input."}, status=status.HTTP_400_BAD_REQUEST)
+
+    full_subject = f"[Contact] {subject}"
+    body = (
+        f"Name: {name}\n"
+        f"Email: {email}\n\n"
+        f"Message:\n{message}"
+    )
+
+    try:
+        send_mail(
+            full_subject,
+            body,
+            settings.DEFAULT_FROM_EMAIL,
+            [getattr(settings, 'CONTACT_TO_EMAIL', 'info@ekwunifescholarship.com')],
+            fail_silently=False,
+        )
+        return Response({"success": True})
+    except Exception as e:
+        return Response({"success": False, "detail": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

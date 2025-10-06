@@ -17,4 +17,7 @@ urlpatterns = [
     # Admin authentication endpoints
     path("admin/auth/", admin_auth.admin_auth, name="admin-auth"),
     path("admin/status/", admin_auth.admin_status, name="admin-status"),
+
+    # Contact endpoint
+    path("contact/", views.contact_message, name="contact-message"),
 ]

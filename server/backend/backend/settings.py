@@ -69,6 +69,7 @@ REST_FRAMEWORK = {
         "rest_framework.permissions.IsAuthenticated",
     ],
 }
+# Note: Public endpoints (e.g., contact) set AllowAny at the view level.
 
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=30),
@@ -200,3 +201,23 @@ CORS_ALLOW_HEADERS = [
 ]
 CORS_ALLOW_METHODS = ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"]
 CORS_ALLOW_ALL_ORIGINS = False
+
+# ------------------------------------------------------------------
+# Email configuration
+# ------------------------------------------------------------------
+EMAIL_BACKEND = os.environ.get("EMAIL_BACKEND")
+if not EMAIL_BACKEND:
+    EMAIL_BACKEND = (
+        "django.core.mail.backends.console.EmailBackend" if DEBUG else "django.core.mail.backends.smtp.EmailBackend"
+    )
+
+EMAIL_HOST = os.environ.get("EMAIL_HOST", "")
+EMAIL_PORT = int(os.environ.get("EMAIL_PORT", "587")) if not os.environ.get("EMAIL_BACKEND", "").endswith("console.EmailBackend") else 0
+EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER", "")
+EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD", "")
+EMAIL_USE_TLS = os.environ.get("EMAIL_USE_TLS", "True").lower() == "true"
+EMAIL_USE_SSL = os.environ.get("EMAIL_USE_SSL", "False").lower() == "true"
+DEFAULT_FROM_EMAIL = os.environ.get("DEFAULT_FROM_EMAIL", "no-reply@ekwunifescholarship.com")
+
+# Contact form recipient (fallback to official inbox)
+CONTACT_TO_EMAIL = os.environ.get("CONTACT_TO_EMAIL", "info@ekwunifescholarship.com")

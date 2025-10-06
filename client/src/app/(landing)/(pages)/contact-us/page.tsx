@@ -33,10 +33,24 @@ export default function ContactUsPage() {
     defaultValues: { name: "", email: "", subject: "", message: "" },
   });
 
-  const onSubmit = (data: FormValues) => {
-    console.log("Contact form submitted:", data);
-    toast.success("Message sent! We'll get back to you soon.");
-    form.reset();
+  const onSubmit = async (data: FormValues) => {
+    const base = (process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000").replace(/\/$/, "");
+    try {
+      const res = await fetch(`${base}/api/contact/`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err?.detail || "Failed to send message");
+      }
+      toast.success("Message sent! We'll get back to you soon.");
+      form.reset();
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : "Could not send message. Try again later.";
+      toast.error(msg);
+    }
   };
 
   return (
